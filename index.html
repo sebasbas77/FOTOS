@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Georreferenciar Fotografía</title>
+    <title>Georreferenciar Fotografías</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,6 +13,7 @@
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
+            flex-direction: column;
         }
 
         .container {
@@ -21,9 +22,17 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
         }
 
-        button {
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .buttons button {
             padding: 10px 20px;
             margin: 10px;
             border: none;
@@ -33,8 +42,23 @@
             cursor: pointer;
         }
 
-        button:hover {
+        .buttons button:hover {
             background-color: #0056b3;
+        }
+
+        .photos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .photos img {
+            max-width: 100%;
+            max-height: 150px;
+            border: 2px solid #007BFF;
+            border-radius: 10px;
         }
 
         #coordinates {
@@ -42,28 +66,28 @@
             font-size: 1.2em;
         }
 
-        #photo {
-            margin-top: 20px;
-            max-width: 100%;
-            border: 2px solid #007BFF;
-            border-radius: 10px;
+        #photoCanvas {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Georreferenciar Fotografía</h1>
-        <button id="getLocationBtn">Obtener Coordenadas</button>
+        <h1>Georreferenciar Fotografías</h1>
+        <div class="buttons">
+            <button id="getLocationBtn">Obtener Coordenadas</button>
+            <button id="takePhotoBtn">Tomar Foto</button>
+            <button id="addCoordinatesBtn" style="display:none;">Agregar Coordenadas</button>
+        </div>
         <p id="coordinates">Latitud: <span id="latitude"></span>, Longitud: <span id="longitude"></span></p>
-        <button id="takePhotoBtn">Tomar Fotografía</button>
-        <button id="addCoordinatesBtn" style="display:none;">Agregar Coordenadas a la Fotografía</button>
         <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none;">
-        <canvas id="photoCanvas" style="display:none;"></canvas>
-        <img id="photo" src="" alt="Fotografía">
+        <canvas id="photoCanvas"></canvas>
+        <div class="photos" id="photosContainer"></div>
     </div>
     <script>
         let currentLat = '';
         let currentLon = '';
+        let photos = [];
 
         document.getElementById('getLocationBtn').addEventListener('click', () => {
             if (navigator.geolocation) {
@@ -98,7 +122,11 @@
         }
 
         document.getElementById('takePhotoBtn').addEventListener('click', () => {
-            document.getElementById('cameraInput').click();
+            if (photos.length < 10) {
+                document.getElementById('cameraInput').click();
+            } else {
+                alert('Ya has tomado 10 fotos.');
+            }
         });
 
         document.getElementById('cameraInput').addEventListener('change', (event) => {
@@ -115,8 +143,8 @@
                         ctx.drawImage(img, 0, 0);
 
                         const dataURL = canvas.toDataURL('image/png');
-                        document.getElementById('photo').src = dataURL;
-                        document.getElementById('photo').style.display = 'block';
+                        photos.push({ dataURL, lat: currentLat, lon: currentLon });
+                        updatePhotoDisplay();
                         document.getElementById('addCoordinatesBtn').style.display = 'block';
                     };
                     img.src = e.target.result;
@@ -126,22 +154,38 @@
         });
 
         document.getElementById('addCoordinatesBtn').addEventListener('click', () => {
-            const canvas = document.getElementById('photoCanvas');
-            const ctx = canvas.getContext('2d');
-            const lat = currentLat;
-            const lon = currentLon;
+            photos = photos.map(photo => {
+                const img = new Image();
+                img.src = photo.dataURL;
+                img.onload = function () {
+                    const canvas = document.getElementById('photoCanvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
 
-            ctx.font = '200px Arial';
-            ctx.fillStyle = 'white';
-            const text = `${lat.toFixed(4)} ${lon.toFixed(4)}`;
-            const textWidth = ctx.measureText(text).width;
-            ctx.fillText(text, canvas.width - textWidth - 20, canvas.height - 20);
+                    ctx.font = '40px Arial';
+                    ctx.fillStyle = 'white';
+                    const text = `${photo.lat.toFixed(4)} ${photo.lon.toFixed(4)}`;
+                    const textWidth = ctx.measureText(text).width;
+                    ctx.fillText(text, canvas.width - textWidth - 20, canvas.height - 20);
 
-            const dataURL = canvas.toDataURL('image/png');
-            document.getElementById('photo').src = dataURL;
-            document.getElementById('photo').style.display = 'block';
+                    photo.dataURL = canvas.toDataURL('image/png');
+                    updatePhotoDisplay();
+                };
+                return photo;
+            });
         });
+
+        function updatePhotoDisplay() {
+            const photosContainer = document.getElementById('photosContainer');
+            photosContainer.innerHTML = '';
+            photos.forEach(photo => {
+                const imgElement = document.createElement('img');
+                imgElement.src = photo.dataURL;
+                photosContainer.appendChild(imgElement);
+            });
+        }
     </script>
 </body>
 </html>
-
