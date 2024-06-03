@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Georreferenciar Fotografía</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #coordinates {
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+
+        #photo {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 2px solid #007BFF;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Georreferenciar Fotografía</h1>
+        <button id="getLocationBtn">Obtener Coordenadas</button>
+        <p id="coordinates">Latitud: <span id="latitude"></span>, Longitud: <span id="longitude"></span></p>
+        <button id="takePhotoBtn">Tomar Fotografía</button>
+        <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none;">
+        <canvas id="photoCanvas" style="display:none;"></canvas>
+        <img id="photo" src="" alt="Fotografía">
+    </div>
+    <script>
+        document.getElementById('getLocationBtn').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        });
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            document.getElementById('latitude').textContent = lat;
+            document.getElementById('longitude').textContent = lon;
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert('User denied the request for Geolocation.');
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert('Location information is unavailable.');
+                    break;
+                case error.TIMEOUT:
+                    alert('The request to get user location timed out.');
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert('An unknown error occurred.');
+                    break;
+            }
+        }
+
+        document.getElementById('takePhotoBtn').addEventListener('click', () => {
+            document.getElementById('cameraInput').click();
+        });
+
+        document.getElementById('cameraInput').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.onload = function () {
+                        const canvas = document.getElementById('photoCanvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+
+                        const lat = document.getElementById('latitude').textContent;
+                        const lon = document.getElementById('longitude').textContent;
+                        ctx.font = '30px Arial';
+                        ctx.fillStyle = 'red';
+                        ctx.fillText(`Lat: ${lat}, Lon: ${lon}`, 20, 50);
+
+                        const dataURL = canvas.toDataURL('image/png');
+                        document.getElementById('photo').src = dataURL;
+                        document.getElementById('photo').style.display = 'block';
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
