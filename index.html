@@ -56,11 +56,15 @@
         <button id="getLocationBtn">Obtener Coordenadas</button>
         <p id="coordinates">Latitud: <span id="latitude"></span>, Longitud: <span id="longitude"></span></p>
         <button id="takePhotoBtn">Tomar Fotografía</button>
+        <button id="addCoordinatesBtn" style="display:none;">Agregar Coordenadas a la Fotografía</button>
         <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none;">
         <canvas id="photoCanvas" style="display:none;"></canvas>
         <img id="photo" src="" alt="Fotografía">
     </div>
     <script>
+        let currentLat = '';
+        let currentLon = '';
+
         document.getElementById('getLocationBtn').addEventListener('click', () => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
@@ -70,10 +74,10 @@
         });
 
         function showPosition(position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            document.getElementById('latitude').textContent = lat;
-            document.getElementById('longitude').textContent = lon;
+            currentLat = position.coords.latitude;
+            currentLon = position.coords.longitude;
+            document.getElementById('latitude').textContent = currentLat;
+            document.getElementById('longitude').textContent = currentLon;
         }
 
         function showError(error) {
@@ -109,21 +113,29 @@
                         canvas.width = img.width;
                         canvas.height = img.height;
                         ctx.drawImage(img, 0, 0);
-
-                        const lat = document.getElementById('latitude').textContent;
-                        const lon = document.getElementById('longitude').textContent;
-                        ctx.font = '30px Arial';
-                        ctx.fillStyle = 'red';
-                        ctx.fillText(`Lat: ${lat}, Lon: ${lon}`, 20, 50);
-
-                        const dataURL = canvas.toDataURL('image/png');
-                        document.getElementById('photo').src = dataURL;
-                        document.getElementById('photo').style.display = 'block';
+                        document.getElementById('addCoordinatesBtn').style.display = 'block';
                     };
                     img.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             }
+        });
+
+        document.getElementById('addCoordinatesBtn').addEventListener('click', () => {
+            const canvas = document.getElementById('photoCanvas');
+            const ctx = canvas.getContext('2d');
+            const lat = currentLat;
+            const lon = currentLon;
+
+            ctx.font = '30px Arial';
+            ctx.fillStyle = 'red';
+            const text = `Lat: ${lat}, Lon: ${lon}`;
+            const textWidth = ctx.measureText(text).width;
+            ctx.fillText(text, canvas.width - textWidth - 20, canvas.height - 20);
+
+            const dataURL = canvas.toDataURL('image/png');
+            document.getElementById('photo').src = dataURL;
+            document.getElementById('photo').style.display = 'block';
         });
     </script>
 </body>
