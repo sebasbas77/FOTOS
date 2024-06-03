@@ -26,15 +26,15 @@
             max-width: 800px;
         }
 
-        .buttons {
+        .buttons, .photo-buttons {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .buttons button {
+        button {
             padding: 10px 20px;
-            margin: 10px;
             border: none;
             background-color: #007BFF;
             color: white;
@@ -42,23 +42,22 @@
             cursor: pointer;
         }
 
-        .buttons button:hover {
+        button:hover {
             background-color: #0056b3;
         }
 
-        .photos {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
+        .photo-container {
             margin-top: 20px;
+            text-align: center;
         }
 
-        .photos img {
+        .photo-container img {
             max-width: 100%;
             max-height: 150px;
             border: 2px solid #007BFF;
             border-radius: 10px;
+            display: block;
+            margin: 10px auto;
         }
 
         #coordinates {
@@ -76,13 +75,11 @@
         <h1>Georreferenciar Fotografías</h1>
         <div class="buttons">
             <button id="getLocationBtn">Obtener Coordenadas</button>
-            <button id="takePhotoBtn">Tomar Foto</button>
-            <button id="addCoordinatesBtn" style="display:none;">Agregar Coordenadas</button>
         </div>
         <p id="coordinates">Latitud: <span id="latitude"></span>, Longitud: <span id="longitude"></span></p>
         <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display:none;">
         <canvas id="photoCanvas"></canvas>
-        <div class="photos" id="photosContainer"></div>
+        <div id="photosContainer"></div>
     </div>
     <script>
         let currentLat = '';
@@ -121,40 +118,39 @@
             }
         }
 
-        document.getElementById('takePhotoBtn').addEventListener('click', () => {
+        function takePhoto(index) {
             if (photos.length < 10) {
                 document.getElementById('cameraInput').click();
+                document.getElementById('cameraInput').onchange = (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const img = new Image();
+                            img.onload = function () {
+                                const canvas = document.getElementById('photoCanvas');
+                                const ctx = canvas.getContext('2d');
+                                canvas.width = img.width;
+                                canvas.height = img.height;
+                                ctx.drawImage(img, 0, 0);
+
+                                const dataURL = canvas.toDataURL('image/png');
+                                photos[index] = { dataURL, lat: currentLat, lon: currentLon };
+                                updatePhotoDisplay();
+                            };
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                };
             } else {
                 alert('Ya has tomado 10 fotos.');
             }
-        });
+        }
 
-        document.getElementById('cameraInput').addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const img = new Image();
-                    img.onload = function () {
-                        const canvas = document.getElementById('photoCanvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        ctx.drawImage(img, 0, 0);
-
-                        const dataURL = canvas.toDataURL('image/png');
-                        photos.push({ dataURL, lat: currentLat, lon: currentLon });
-                        updatePhotoDisplay();
-                        document.getElementById('addCoordinatesBtn').style.display = 'block';
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        document.getElementById('addCoordinatesBtn').addEventListener('click', () => {
-            photos = photos.map(photo => {
+        function addCoordinates(index) {
+            const photo = photos[index];
+            if (photo) {
                 const img = new Image();
                 img.src = photo.dataURL;
                 img.onload = function () {
@@ -173,19 +169,31 @@
                     photo.dataURL = canvas.toDataURL('image/png');
                     updatePhotoDisplay();
                 };
-                return photo;
-            });
-        });
+            }
+        }
 
         function updatePhotoDisplay() {
             const photosContainer = document.getElementById('photosContainer');
             photosContainer.innerHTML = '';
-            photos.forEach(photo => {
-                const imgElement = document.createElement('img');
-                imgElement.src = photo.dataURL;
-                photosContainer.appendChild(imgElement);
+            photos.forEach((photo, index) => {
+                const photoContainer = document.createElement('div');
+                photoContainer.className = 'photo-container';
+                photoContainer.innerHTML = `
+                    <h2>FOTO ${index + 1}</h2>
+                    <img src="${photo.dataURL}" alt="Fotografía ${index + 1}">
+                    <div class="photo-buttons">
+                        <button onclick="takePhoto(${index})">Tomar Foto</button>
+                        <button onclick="addCoordinates(${index})">Agregar Coordenadas</button>
+                    </div>
+                `;
+                photosContainer.appendChild(photoContainer);
             });
         }
+
+        for (let i = 0; i < 10; i++) {
+            photos.push({});
+        }
+        updatePhotoDisplay();
     </script>
 </body>
 </html>
