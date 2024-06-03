@@ -39,7 +39,7 @@
 
         #coordinates {
             margin: 20px 0;
-            font-size: 5.0em;
+            font-size: 1.2em;
         }
 
         #photo {
@@ -131,7 +131,7 @@
             const lat = currentLat;
             const lon = currentLon;
 
-            ctx.font = '40px Arial';
+            ctx.font = '200px Arial';
             ctx.fillStyle = 'white';
             const text = `${lat.toFixed(4)} ${lon.toFixed(4)}`;
             const textWidth = ctx.measureText(text).width;
@@ -144,3 +144,4 @@
     </script>
 </body>
 </html>
+
