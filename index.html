@@ -127,9 +127,14 @@
             <input type="file" id="file-input" accept="image/*" multiple>
         </div>
         <div class="photos" id="photos"></div>
+        <div class="field">
+            <button onclick="downloadAllPhotos()">Descargar Todas las Fotos</button>
+        </div>
     </div>
     
     <script>
+        let photos = [];
+
         function getCurrentDateTime(date = new Date()) {
             const day = date.getDate();
             const month = date.toLocaleString('es-ES', { month: 'short' });
@@ -307,12 +312,7 @@
             const img = document.createElement('img');
             img.src = dataURL;
             photosContainer.appendChild(img);
-
-            // Crear un enlace para descargar la imagen
-            const link = document.createElement('a');
-            link.href = dataURL;
-            link.download = 'imagen_rotulada.png';
-            link.click();
+            photos.push(dataURL);
         }
 
         function handleFileSelect(event) {
@@ -324,6 +324,15 @@
                 };
                 reader.readAsDataURL(files[i]);
             }
+        }
+
+        function downloadAllPhotos() {
+            photos.forEach((photo, index) => {
+                const link = document.createElement('a');
+                link.href = photo;
+                link.download = `imagen_rotulada_${index + 1}.png`;
+                link.click();
+            });
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
