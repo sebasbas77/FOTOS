@@ -35,7 +35,8 @@
         }
         .field input,
         .field textarea,
-        .field button {
+        .field button,
+        .field input[type="range"] {
             width: 100%;
             padding: 10px;
             box-sizing: border-box;
@@ -106,6 +107,10 @@
         </div>
         <div class="field">
             <button onclick="getCurrentData()">Obtener Datos Actuales</button>
+        </div>
+        <div class="field">
+            <label for="horizontal-position">Posición Horizontal del Texto:</label>
+            <input type="range" id="horizontal-position" min="0" max="100" value="80">
         </div>
         <div class="field photo-container">
             <video id="video" autoplay></video>
@@ -256,6 +261,7 @@
             const video = document.getElementById('video');
             const ctx = canvas.getContext('2d');
             const completeAddress = document.getElementById('address').value;
+            const horizontalPosition = document.getElementById('horizontal-position').value;
 
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -271,7 +277,7 @@
 
             // Dividir el texto en líneas
             const lines = completeAddress.split('\n');
-            const x = canvas.width - 20;
+            const x = (canvas.width * horizontalPosition) / 100;
             let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
 
             lines.reverse().forEach(line => {
