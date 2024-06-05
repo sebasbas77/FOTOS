@@ -73,6 +73,17 @@
             top: 0;
             left: 0;
         }
+        .photos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .photos img {
+            max-width: 150px;
+            margin: 5px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
         @media (min-width: 768px) {
             .container {
                 max-width: 600px;
@@ -112,8 +123,10 @@
             <canvas id="canvas"></canvas>
         </div>
         <div class="field">
-            <button onclick="capturePhoto()">Capturar y Guardar Foto</button>
+            <button onclick="capturePhoto()">Capturar Foto</button>
+            <input type="file" id="file-input" accept="image/*" multiple>
         </div>
+        <div class="photos" id="photos"></div>
     </div>
     
     <script>
@@ -286,15 +299,37 @@
         function capturePhoto() {
             const canvas = document.getElementById('canvas');
             const dataURL = canvas.toDataURL('image/png');
+            addPhotoToGallery(dataURL);
+        }
+
+        function addPhotoToGallery(dataURL) {
+            const photosContainer = document.getElementById('photos');
+            const img = document.createElement('img');
+            img.src = dataURL;
+            photosContainer.appendChild(img);
+
+            // Crear un enlace para descargar la imagen
             const link = document.createElement('a');
             link.href = dataURL;
             link.download = 'imagen_rotulada.png';
             link.click();
         }
 
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    addPhotoToGallery(e.target.result);
+                };
+                reader.readAsDataURL(files[i]);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', (event) => {
             getCurrentData();
             startCamera();
+            document.getElementById('file-input').addEventListener('change', handleFileSelect);
         });
     </script>
 </body>
