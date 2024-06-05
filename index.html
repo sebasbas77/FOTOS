@@ -248,8 +248,9 @@
 
             ctx.drawImage(image, 0, 0);
 
-            // Estilos del texto
-            ctx.font = '20px Arial';
+            // Ajustar el tamaño de la fuente basado en el tamaño de la imagen
+            const fontSize = Math.max(20, canvas.width * 0.02);
+            ctx.font = `${fontSize}px Arial`;
             ctx.fillStyle = 'white';
             ctx.strokeStyle = 'black';
             ctx.lineWidth = 2;
@@ -257,12 +258,12 @@
             // Dividir el texto en líneas
             const lines = completeAddress.split('\n');
             const x = canvas.width - 20;
-            let y = canvas.height - 20;
+            let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
 
             lines.reverse().forEach(line => {
                 ctx.strokeText(line, x, y);
                 ctx.fillText(line, x, y);
-                y -= 25; // Espaciado entre líneas
+                y += fontSize + 10; // Espaciado entre líneas
             });
 
             const dataURL = canvas.toDataURL('image/png');
