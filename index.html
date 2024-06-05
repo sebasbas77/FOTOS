@@ -1,26 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo with Watermark</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Obtener Datos de Geolocalización y Fecha/Hora</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        .field {
+            margin-bottom: 15px;
+        }
+        .field label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .field input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .field textarea {
+            width: 100%;
+            height: 100px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <video id="video" width="640" height="480" autoplay></video>
-        <button id="snap">Take Photo</button>
-        <canvas id="canvas" width="640" height="480"></canvas>
-        <div id="watermark">
-            <p id="datetime"></p>
-            <p id="coordinates"></p>
-            <p>E1-140 De los Eucaliptos</p>
-            <p>Anansayas</p>
-            <p>Distrito Metropolitano de Quito</p>
-            <p>Pichincha</p>
-            <p>PROCISA – PRO1</p>
+        <h2>Obtener Datos de Geolocalización y Fecha/Hora</h2>
+        <div class="field">
+            <label for="datetime">Fecha y Hora:</label>
+            <input type="text" id="datetime" readonly>
+        </div>
+        <div class="field">
+            <label for="coordinates">Coordenadas Georreferenciales (Grados Decimales):</label>
+            <input type="text" id="coordinates" readonly>
+        </div>
+        <div class="field">
+            <label for="address">Dirección GPS:</label>
+            <textarea id="address" readonly></textarea>
         </div>
     </div>
-    <script src="script.js"></script>
+    
+    <script>
+        function getCurrentDateTime() {
+            const now = new Date();
+            return now.toLocaleString();
+        }
+
+        function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            document.getElementById('coordinates').value = `${latitude}, ${longitude}`;
+
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('address').value = data.display_name;
+                })
+                .catch(error => {
+                    document.getElementById('address').value = 'No se pudo obtener la dirección';
+                });
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("Permiso denegado para obtener la ubicación.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("La información de ubicación no está disponible.");
+                    break;
+                case error.TIMEOUT:
+                    alert("La solicitud para obtener la ubicación ha caducado.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("Se ha producido un error desconocido.");
+                    break;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('datetime').value = getCurrentDateTime();
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("La geolocalización no es compatible con este navegador.");
+            }
+        });
+    </script>
 </body>
 </html>
