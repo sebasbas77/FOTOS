@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+}<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -61,16 +61,17 @@
     <script>
         function getCurrentDateTime() {
             const now = new Date();
-            const options = {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-                hour12: true
-            };
-            return now.toLocaleString('es-ES', options).replace(/\./g, '').replace(',', '');
+
+            const day = now.getDate();
+            const month = now.toLocaleString('es-ES', { month: 'short' });
+            const year = now.getFullYear();
+
+            const hours = now.getHours() % 12 || 12;
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const ampm = now.getHours() >= 12 ? 'p. m.' : 'a. m.';
+
+            return `${day}. ${month} ${year} ${hours}:${minutes}:${seconds} ${ampm}`;
         }
 
         function formatCoordinates(latitude, longitude) {
