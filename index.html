@@ -302,7 +302,7 @@
             // Dividir el texto en líneas
             const lines = completeAddress.split('\n');
             const x = 20; // Ajustar la posición x del texto
-            let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
+            let y = canvas.height - 5 - (lines.length - 1) * (fontSize + 7); // Ajustar la posición inicial del texto
 
             lines.forEach(line => {
                 ctx.strokeText(line, x, y);
@@ -363,7 +363,7 @@
                         // Dividir el texto en líneas
                         const lines = completeAddress.split('\n');
                         const x = 20; // Ajustar la posición x del texto
-                        let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
+                        let y = canvas.height - 5 - (lines.length - 1) * (fontSize + 7); // Ajustar la posición inicial del texto
 
                         lines.forEach(line => {
                             ctx.strokeText(line, x, y);
