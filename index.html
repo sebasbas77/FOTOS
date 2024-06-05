@@ -59,7 +59,7 @@
             <button onclick="updateCoordinates()">Actualizar Coordenadas</button>
         </div>
         <div class="field">
-            <label for="address">Dirección GPS:</label>
+            <label for="address">Datos Completos:</label>
             <textarea id="address" readonly></textarea>
         </div>
     </div>
@@ -94,6 +94,14 @@
             return `${street}\n${neighborhood}\n${city}\n${province}`;
         }
 
+        function updateCompleteAddress() {
+            const dateTime = document.getElementById('datetime').value;
+            const coordinates = document.getElementById('coordinates').value;
+            const address = document.getElementById('address').value;
+
+            document.getElementById('address').value = `${dateTime}\n${coordinates}\n${address}`;
+        }
+
         function showPosition(position) {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
@@ -105,6 +113,7 @@
                 .then(data => {
                     const formattedAddress = formatAddress(data);
                     document.getElementById('address').value = formattedAddress;
+                    updateCompleteAddress();
                 })
                 .catch(error => {
                     document.getElementById('address').value = 'No se pudo obtener la dirección';
@@ -134,6 +143,7 @@
                 const date = new Date(inputDateTime);
                 const formattedDateTime = getCurrentDateTime(date);
                 document.getElementById('datetime').value = formattedDateTime;
+                updateCompleteAddress();
             }
         }
 
@@ -149,6 +159,7 @@
                     .then(data => {
                         const formattedAddress = formatAddress(data);
                         document.getElementById('address').value = formattedAddress;
+                        updateCompleteAddress();
                     })
                     .catch(error => {
                         document.getElementById('address').value = 'No se pudo obtener la dirección';
