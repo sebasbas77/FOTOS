@@ -61,7 +61,7 @@
             margin-bottom: 15px;
             position: relative;
         }
-        .photo-container img,
+        .photo-container video,
         .photo-container canvas {
             max-width: 100%;
             height: auto;
@@ -103,14 +103,11 @@
             <button onclick="getCurrentData()">Obtener Datos Actuales</button>
         </div>
         <div class="field photo-container">
-            <input type="file" accept="image/*" capture="camera" onchange="showImage(event)">
-            <div id="image-wrapper">
-                <img id="photo" src="" alt="Foto">
-                <canvas id="canvas" style="display:none;"></canvas>
-            </div>
+            <video id="video" autoplay></video>
+            <canvas id="canvas" style="display:none;"></canvas>
         </div>
         <div class="field">
-            <button onclick="addDataToPhoto()">Añadir Datos a la Foto</button>
+            <button onclick="addDataToPhoto()">Capturar y Guardar Foto</button>
         </div>
     </div>
     
@@ -231,22 +228,26 @@
             }
         }
 
-        function showImage(event) {
-            const image = document.getElementById('photo');
-            image.src = URL.createObjectURL(event.target.files[0]);
-            image.onload = () => URL.revokeObjectURL(image.src);
+        function startCamera() {
+            const video = document.getElementById('video');
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+                    video.srcObject = stream;
+                    video.play();
+                });
+            }
         }
 
         function addDataToPhoto() {
             const canvas = document.getElementById('canvas');
-            const image = document.getElementById('photo');
+            const video = document.getElementById('video');
             const ctx = canvas.getContext('2d');
             const completeAddress = document.getElementById('address').value;
 
-            canvas.width = image.naturalWidth;
-            canvas.height = image.naturalHeight;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
 
-            ctx.drawImage(image, 0, 0);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
             // Ajustar el tamaño de la fuente basado en el tamaño de la imagen
             const fontSize = Math.max(20, canvas.width * 0.02);
@@ -267,10 +268,6 @@
             });
 
             const dataURL = canvas.toDataURL('image/png');
-            image.src = dataURL;
-            canvas.style.display = 'none';
-
-            // Crear un enlace para descargar la imagen
             const link = document.createElement('a');
             link.href = dataURL;
             link.download = 'imagen_rotulada.png';
@@ -279,6 +276,7 @@
 
         document.addEventListener('DOMContentLoaded', (event) => {
             getCurrentData();
+            startCamera();
         });
     </script>
 </body>
