@@ -55,8 +55,7 @@
         <div class="field">
             <label for="coordinates">Coordenadas Georreferenciales (Grados Decimales):</label>
             <input type="text" id="coordinates" readonly>
-            <input type="text" id="edit-latitude" placeholder="Latitud">
-            <input type="text" id="edit-longitude" placeholder="Longitud">
+            <input type="text" id="edit-coordinates" placeholder="Latitud, Longitud">
             <button onclick="updateCoordinates()">Actualizar Coordenadas</button>
         </div>
         <div class="field">
@@ -66,17 +65,15 @@
     </div>
     
     <script>
-        function getCurrentDateTime() {
-            const now = new Date();
+        function getCurrentDateTime(date = new Date()) {
+            const day = date.getDate();
+            const month = date.toLocaleString('es-ES', { month: 'short' });
+            const year = date.getFullYear();
 
-            const day = now.getDate();
-            const month = now.toLocaleString('es-ES', { month: 'short' });
-            const year = now.getFullYear();
-
-            const hours = now.getHours() % 12 || 12;
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
-            const ampm = now.getHours() >= 12 ? 'p. m.' : 'a. m.';
+            const hours = date.getHours() % 12 || 12;
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            const ampm = date.getHours() >= 12 ? 'p. m.' : 'a. m.';
 
             return `${day}. ${month} ${year} ${hours}:${minutes}:${seconds} ${ampm}`;
         }
@@ -135,14 +132,14 @@
             const inputDateTime = document.getElementById('edit-datetime').value;
             if (inputDateTime) {
                 const date = new Date(inputDateTime);
-                const formattedDateTime = getCurrentDateTime.call({ now: date });
+                const formattedDateTime = getCurrentDateTime(date);
                 document.getElementById('datetime').value = formattedDateTime;
             }
         }
 
         function updateCoordinates() {
-            const latitude = parseFloat(document.getElementById('edit-latitude').value);
-            const longitude = parseFloat(document.getElementById('edit-longitude').value);
+            const coordinatesInput = document.getElementById('edit-coordinates').value;
+            const [latitude, longitude] = coordinatesInput.split(',').map(coord => parseFloat(coord.trim()));
             if (!isNaN(latitude) && !isNaN(longitude)) {
                 const formattedCoordinates = formatCoordinates(latitude, longitude);
                 document.getElementById('coordinates').value = formattedCoordinates;
