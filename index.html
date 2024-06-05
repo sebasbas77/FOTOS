@@ -59,8 +59,8 @@
             <button onclick="updateCoordinates()">Actualizar Coordenadas</button>
         </div>
         <div class="field">
-            <label for="complete-data">Datos Completos:</label>
-            <textarea id="complete-data" readonly></textarea>
+            <label for="address">Datos Completos:</label>
+            <textarea id="address" readonly></textarea>
         </div>
     </div>
     
@@ -97,10 +97,10 @@
         function updateCompleteAddress() {
             const dateTime = document.getElementById('datetime').value;
             const coordinates = document.getElementById('coordinates').value;
-            const address = document.getElementById('address').value;
+            const address = document.getElementById('address').value.split('\n').slice(3).join('\n'); // Remove previous datetime and coordinates
 
-            const completeData = `${dateTime}\n${coordinates}\n${address}`;
-            document.getElementById('complete-data').value = completeData.trim();
+            const completeAddress = `${dateTime}\n${coordinates}\n${address}`;
+            document.getElementById('address').value = completeAddress;
         }
 
         function showPosition(position) {
@@ -113,8 +113,9 @@
                 .then(response => response.json())
                 .then(data => {
                     const formattedAddress = formatAddress(data);
-                    document.getElementById('address').value = formattedAddress;
-                    updateCompleteAddress();
+                    const dateTime = document.getElementById('datetime').value;
+                    const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}`;
+                    document.getElementById('address').value = completeAddress;
                 })
                 .catch(error => {
                     document.getElementById('address').value = 'No se pudo obtener la dirección';
@@ -159,8 +160,9 @@
                     .then(response => response.json())
                     .then(data => {
                         const formattedAddress = formatAddress(data);
-                        document.getElementById('address').value = formattedAddress;
-                        updateCompleteAddress();
+                        const dateTime = document.getElementById('datetime').value;
+                        const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}`;
+                        document.getElementById('address').value = completeAddress;
                     })
                     .catch(error => {
                         document.getElementById('address').value = 'No se pudo obtener la dirección';
@@ -171,9 +173,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
-            const dateTime = getCurrentDateTime();
-            document.getElementById('datetime').value = dateTime;
-
+            document.getElementById('datetime').value = getCurrentDateTime();
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
             } else {
