@@ -315,13 +315,13 @@
 
             // Dividir el texto en líneas
             const lines = completeAddress.split('\n');
-            const x = 20; // Ajustar la posición x del texto
-            let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
+            const x = 15; // Ajustar la posición x del texto
+            let y = canvas.height - 3 - (lines.length - 1) * (fontSize + 3); // Ajustar la posición inicial del texto
 
             lines.forEach(line => {
                 ctx.strokeText(line, x, y);
                 ctx.fillText(line, x, y);
-                y += fontSize + 10; // Espaciado entre líneas
+                y += fontSize + 1; // Espaciado entre líneas
             });
 
             requestAnimationFrame(drawCanvas);
@@ -376,13 +376,13 @@
 
                         // Dividir el texto en líneas
                         const lines = completeAddress.split('\n');
-                        const x = 20; // Ajustar la posición x del texto
-                        let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
+                        const x = 15; // Ajustar la posición x del texto
+                        let y = canvas.height - 3 - (lines.length - 1) * (fontSize + 3); // Ajustar la posición inicial del texto
 
                         lines.forEach(line => {
                             ctx.strokeText(line, x, y);
                             ctx.fillText(line, x, y);
-                            y += fontSize + 10; // Espaciado entre líneas
+                            y += fontSize + 1; // Espaciado entre líneas
                         });
 
                         const dataURL = canvas.toDataURL('image/png');
