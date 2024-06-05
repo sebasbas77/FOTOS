@@ -59,22 +59,14 @@
         .photo-container {
             text-align: center;
             margin-bottom: 15px;
+            position: relative;
         }
-        .photo-container img {
+        .photo-container img,
+        .photo-container canvas {
             max-width: 100%;
             height: auto;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .overlay-text {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 0.9em;
         }
         @media (min-width: 768px) {
             .container {
@@ -114,7 +106,7 @@
             <input type="file" accept="image/*" capture="camera" onchange="showImage(event)">
             <div id="image-wrapper">
                 <img id="photo" src="" alt="Foto">
-                <div id="overlay-text" class="overlay-text"></div>
+                <canvas id="canvas" style="display:none;"></canvas>
             </div>
         </div>
         <div class="field">
@@ -246,9 +238,42 @@
         }
 
         function addDataToPhoto() {
+            const canvas = document.getElementById('canvas');
+            const image = document.getElementById('photo');
+            const ctx = canvas.getContext('2d');
             const completeAddress = document.getElementById('address').value;
-            const overlayText = document.getElementById('overlay-text');
-            overlayText.innerText = completeAddress;
+
+            canvas.width = image.naturalWidth;
+            canvas.height = image.naturalHeight;
+
+            ctx.drawImage(image, 0, 0);
+
+            // Estilos del texto
+            ctx.font = '20px Arial';
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+
+            // Dividir el texto en líneas
+            const lines = completeAddress.split('\n');
+            const x = canvas.width - 20;
+            let y = canvas.height - 20;
+
+            lines.reverse().forEach(line => {
+                ctx.strokeText(line, x, y);
+                ctx.fillText(line, x, y);
+                y -= 25; // Espaciado entre líneas
+            });
+
+            const dataURL = canvas.toDataURL('image/png');
+            image.src = dataURL;
+            canvas.style.display = 'none';
+
+            // Crear un enlace para descargar la imagen
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'imagen_rotulada.png';
+            link.click();
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
