@@ -59,8 +59,8 @@
             <button onclick="updateCoordinates()">Actualizar Coordenadas</button>
         </div>
         <div class="field">
-            <label for="address">Datos Completos:</label>
-            <textarea id="full-data" readonly></textarea>
+            <label for="complete-data">Datos Completos:</label>
+            <textarea id="complete-data" readonly></textarea>
         </div>
     </div>
     
@@ -99,7 +99,8 @@
             const coordinates = document.getElementById('coordinates').value;
             const address = document.getElementById('address').value;
 
-            document.getElementById('full-data').value = `${dateTime}\n${coordinates}\n${address}`;
+            const completeData = `${dateTime}\n${coordinates}\n${address}`;
+            document.getElementById('complete-data').value = completeData.trim();
         }
 
         function showPosition(position) {
@@ -170,7 +171,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
-            document.getElementById('datetime').value = getCurrentDateTime();
+            const dateTime = getCurrentDateTime();
+            document.getElementById('datetime').value = dateTime;
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
             } else {
