@@ -133,9 +133,9 @@
     </div>
     
     <script>
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 600;
         let photos = [];
-        const CANVAS_WIDTH = 640;  // Anchura fija del canvas
-        const CANVAS_HEIGHT = 480; // Altura fija del canvas
 
         function getCurrentDateTime(date = new Date()) {
             const day = date.getDate();
@@ -277,8 +277,18 @@
             const ctx = canvas.getContext('2d');
             const completeAddress = document.getElementById('address').value;
 
-            canvas.width = CANVAS_WIDTH;
-            canvas.height = CANVAS_HEIGHT;
+            const aspectRatio = video.videoWidth / video.videoHeight;
+            let width = MAX_WIDTH;
+            let height = MAX_HEIGHT;
+
+            if (aspectRatio > 1) {
+                height = width / aspectRatio;
+            } else {
+                width = height * aspectRatio;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
 
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -328,14 +338,20 @@
                         const ctx = canvas.getContext('2d');
                         const completeAddress = document.getElementById('address').value;
 
-                        const scale = Math.min(CANVAS_WIDTH / img.width, CANVAS_HEIGHT / img.height);
-                        const x = (CANVAS_WIDTH / 2) - (img.width / 2) * scale;
-                        const y = (CANVAS_HEIGHT / 2) - (img.height / 2) * scale;
+                        const aspectRatio = img.width / img.height;
+                        let width = MAX_WIDTH;
+                        let height = MAX_HEIGHT;
 
-                        canvas.width = CANVAS_WIDTH;
-                        canvas.height = CANVAS_HEIGHT;
+                        if (aspectRatio > 1) {
+                            height = width / aspectRatio;
+                        } else {
+                            width = height * aspectRatio;
+                        }
 
-                        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
                         // Ajustar el tamaño de la fuente basado en el tamaño de la imagen
                         const fontSize = Math.max(20, canvas.width * 0.02);
@@ -346,13 +362,13 @@
 
                         // Dividir el texto en líneas
                         const lines = completeAddress.split('\n');
-                        const textX = 20; // Ajustar la posición x del texto
-                        let textY = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
+                        const x = 20; // Ajustar la posición x del texto
+                        let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
 
                         lines.forEach(line => {
-                            ctx.strokeText(line, textX, textY);
-                            ctx.fillText(line, textX, textY);
-                            textY += fontSize + 10; // Espaciado entre líneas
+                            ctx.strokeText(line, x, y);
+                            ctx.fillText(line, x, y);
+                            y += fontSize + 10; // Espaciado entre líneas
                         });
 
                         const dataURL = canvas.toDataURL('image/png');
