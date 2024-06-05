@@ -280,30 +280,25 @@
 
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // Rotular la imagen
-            drawTextOnCanvas(ctx, canvas.width, canvas.height, completeAddress);
-
-            requestAnimationFrame(drawCanvas);
-        }
-
-        function drawTextOnCanvas(ctx, width, height, text) {
             // Ajustar el tamaño de la fuente basado en el tamaño de la imagen
-            const fontSize = Math.max(20, width * 0.02);
+            const fontSize = Math.max(20, canvas.width * 0.02);
             ctx.font = `${fontSize}px Arial`;
             ctx.fillStyle = 'white';
             ctx.strokeStyle = 'black';
             ctx.lineWidth = 2;
 
             // Dividir el texto en líneas
-            const lines = text.split('\n');
+            const lines = completeAddress.split('\n');
             const x = 20; // Ajustar la posición x del texto
-            let y = height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
+            let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
 
             lines.forEach(line => {
                 ctx.strokeText(line, x, y);
                 ctx.fillText(line, x, y);
                 y += fontSize + 10; // Espaciado entre líneas
             });
+
+            requestAnimationFrame(drawCanvas);
         }
 
         function capturePhoto() {
@@ -336,8 +331,23 @@
 
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                        // Rotular la imagen
-                        drawTextOnCanvas(ctx, canvas.width, canvas.height, completeAddress);
+                        // Ajustar el tamaño de la fuente basado en el tamaño de la imagen
+                        const fontSize = Math.max(20, canvas.width * 0.02);
+                        ctx.font = `${fontSize}px Arial`;
+                        ctx.fillStyle = 'white';
+                        ctx.strokeStyle = 'black';
+                        ctx.lineWidth = 2;
+
+                        // Dividir el texto en líneas
+                        const lines = completeAddress.split('\n');
+                        const x = 20; // Ajustar la posición x del texto
+                        let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
+
+                        lines.forEach(line => {
+                            ctx.strokeText(line, x, y);
+                            ctx.fillText(line, x, y);
+                            y += fontSize + 10; // Espaciado entre líneas
+                        });
 
                         const dataURL = canvas.toDataURL('image/png');
                         addPhotoToGallery(dataURL);
