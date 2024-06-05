@@ -68,6 +68,11 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
         @media (min-width: 768px) {
             .container {
                 max-width: 600px;
@@ -104,10 +109,10 @@
         </div>
         <div class="field photo-container">
             <video id="video" autoplay></video>
-            <canvas id="canvas" style="display:none;"></canvas>
+            <canvas id="canvas"></canvas>
         </div>
         <div class="field">
-            <button onclick="addDataToPhoto()">Capturar y Guardar Foto</button>
+            <button onclick="capturePhoto()">Capturar y Guardar Foto</button>
         </div>
     </div>
     
@@ -230,15 +235,23 @@
 
         function startCamera() {
             const video = document.getElementById('video');
+            const constraints = {
+                video: {
+                    facingMode: 'environment'
+                }
+            };
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+                navigator.mediaDevices.getUserMedia(constraints).then(stream => {
                     video.srcObject = stream;
                     video.play();
+                    video.onloadedmetadata = () => {
+                        drawCanvas();
+                    };
                 });
             }
         }
 
-        function addDataToPhoto() {
+        function drawCanvas() {
             const canvas = document.getElementById('canvas');
             const video = document.getElementById('video');
             const ctx = canvas.getContext('2d');
@@ -267,6 +280,11 @@
                 y += fontSize + 10; // Espaciado entre líneas
             });
 
+            requestAnimationFrame(drawCanvas);
+        }
+
+        function capturePhoto() {
+            const canvas = document.getElementById('canvas');
             const dataURL = canvas.toDataURL('image/png');
             const link = document.createElement('a');
             link.href = dataURL;
