@@ -112,6 +112,14 @@
             <button onclick="updateCoordinates()">Actualizar</button>
         </div>
         <div class="field">
+            <label for="group">Grupo:</label>
+            <input type="text" id="group" value="PR0-01">
+        </div>
+        <div class="field">
+            <label for="company">Empresa:</label>
+            <input type="text" id="company" value="PROCISA">
+        </div>
+        <div class="field">
             <label for="address">Datos Completos:</label>
             <textarea id="address" rows="6" readonly></textarea>
         </div>
@@ -169,9 +177,11 @@
         function updateCompleteAddress() {
             const dateTime = document.getElementById('datetime').value;
             const coordinates = document.getElementById('coordinates').value;
+            const group = document.getElementById('group').value;
+            const company = document.getElementById('company').value;
             const address = document.getElementById('address').value.split('\n').slice(3).join('\n'); // Remove previous datetime and coordinates
 
-            const completeAddress = `${dateTime}\n${coordinates}\n${address}`;
+            const completeAddress = `${dateTime}\n${coordinates}\n${address}\n${group}\n${company}`;
             document.getElementById('address').value = completeAddress;
         }
 
@@ -186,7 +196,9 @@
                 .then(data => {
                     const formattedAddress = formatAddress(data);
                     const dateTime = document.getElementById('datetime').value;
-                    const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}`;
+                    const group = document.getElementById('group').value;
+                    const company = document.getElementById('company').value;
+                    const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}\n${group}\n${company}`;
                     document.getElementById('address').value = completeAddress;
                 })
                 .catch(error => {
@@ -233,7 +245,9 @@
                     .then(data => {
                         const formattedAddress = formatAddress(data);
                         const dateTime = document.getElementById('datetime').value;
-                        const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}`;
+                        const group = document.getElementById('group').value;
+                        const company = document.getElementById('company').value;
+                        const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}\n${group}\n${company}`;
                         document.getElementById('address').value = completeAddress;
                     })
                     .catch(error => {
@@ -301,13 +315,13 @@
 
             // Dividir el texto en líneas
             const lines = completeAddress.split('\n');
-            const x = 15; // Ajustar la posición x del texto
-            let y = canvas.height - 3 - (lines.length - 1) * (fontSize + 3); // Ajustar la posición inicial del texto
+            const x = 20; // Ajustar la posición x del texto
+            let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
 
             lines.forEach(line => {
                 ctx.strokeText(line, x, y);
                 ctx.fillText(line, x, y);
-                y += fontSize + 1; // Espaciado entre líneas
+                y += fontSize + 10; // Espaciado entre líneas
             });
 
             requestAnimationFrame(drawCanvas);
@@ -362,13 +376,13 @@
 
                         // Dividir el texto en líneas
                         const lines = completeAddress.split('\n');
-                        const x = 15; // Ajustar la posición x del texto
-                        let y = canvas.height - 10 - (lines.length - 1) * (fontSize + 3); // Ajustar la posición inicial del texto
+                        const x = 20; // Ajustar la posición x del texto
+                        let y = canvas.height - 20 - (lines.length - 1) * (fontSize + 10); // Ajustar la posición inicial del texto
 
                         lines.forEach(line => {
                             ctx.strokeText(line, x, y);
                             ctx.fillText(line, x, y);
-                            y += fontSize + 1; // Espaciado entre líneas
+                            y += fontSize + 10; // Espaciado entre líneas
                         });
 
                         const dataURL = canvas.toDataURL('image/png');
