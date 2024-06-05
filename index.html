@@ -64,10 +64,17 @@
             return now.toLocaleString();
         }
 
+        function formatCoordinates(latitude, longitude) {
+            const latDirection = latitude >= 0 ? 'N' : 'S';
+            const lonDirection = longitude >= 0 ? 'E' : 'W';
+            return `${Math.abs(latitude).toFixed(5)}${latDirection} ${Math.abs(longitude).toFixed(5)}${lonDirection}`;
+        }
+
         function showPosition(position) {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-            document.getElementById('coordinates').value = `${latitude}, ${longitude}`;
+            const formattedCoordinates = formatCoordinates(latitude, longitude);
+            document.getElementById('coordinates').value = formattedCoordinates;
 
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
                 .then(response => response.json())
