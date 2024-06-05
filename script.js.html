@@ -3,6 +3,8 @@ const canvas = document.getElementById('canvas');
 const snap = document.getElementById('snap');
 const context = canvas.getContext('2d');
 const watermark = document.getElementById('watermark');
+const datetime = document.getElementById('datetime');
+const coordinates = document.getElementById('coordinates');
 
 // Access the device camera and stream to video element
 navigator.mediaDevices.getUserMedia({ video: true })
@@ -13,28 +15,56 @@ navigator.mediaDevices.getUserMedia({ video: true })
         console.error("Error accessing the camera: ", err);
     });
 
-// Capture photo
-snap.addEventListener('click', () => {
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const watermarkText = watermark.innerHTML;
-    context.font = '12px Arial';
-    context.fillStyle = 'white';
-    context.textAlign = 'right';
-    context.shadowColor = 'black';
-    context.shadowOffsetX = 2;
-    context.shadowOffsetY = 2;
-    context.shadowBlur = 4;
-    
-    const lines = watermarkText.split('<br>');
-    let y = canvas.height - 10;
-    for (let i = lines.length - 1; i >= 0; i--) {
-        context.fillText(lines[i], canvas.width - 10, y);
-        y -= 15;
-    }
+// Get the current date and time
+function getCurrentDateTime() {
+    const now = new Date();
+    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+    const dateTimeString = now.toLocaleDateString('es-ES', options);
+    datetime.textContent = dateTimeString;
+}
 
-    // Show the captured photo with watermark
-    const dataUrl = canvas.toDataURL();
-    const img = document.createElement('img');
-    img.src = dataUrl;
-    document.body.appendChild(img);
+// Get the current coordinates
+function getCoordinates() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude.toFixed(5);
+            const lon = position.coords.longitude.toFixed(5);
+            const latDirection = lat >= 0 ? 'N' : 'S';
+            const lonDirection = lon >= 0 ? 'E' : 'W';
+            coordinates.textContent = `${Math.abs(lat)}${latDirection} ${Math.abs(lon)}${lonDirection}`;
+        });
+    } else {
+        coordinates.textContent = 'Geolocation is not supported by this browser.';
+    }
+}
+
+// Capture photo and add watermark
+snap.addEventListener('click', () => {
+    getCurrentDateTime();
+    getCoordinates();
+
+    // Wait for the coordinates to be updated before taking the photo
+    setTimeout(() => {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const watermarkText = watermark.innerHTML.replace(/<br>/g, '\n').split('\n');
+        context.font = '12px Arial';
+        context.fillStyle = 'white';
+        context.textAlign = 'right';
+        context.shadowColor = 'black';
+        context.shadowOffsetX = 2;
+        context.shadowOffsetY = 2;
+        context.shadowBlur = 4;
+
+        let y = canvas.height - 10;
+        watermarkText.forEach(line => {
+            context.fillText(line.trim(), canvas.width - 10, y);
+            y -= 15;
+        });
+
+        // Show the captured photo with watermark
+        const dataUrl = canvas.toDataURL();
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        document.body.appendChild(img);
+    }, 1000); // Delay to ensure coordinates are fetched
 });
