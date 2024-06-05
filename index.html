@@ -61,7 +61,16 @@
     <script>
         function getCurrentDateTime() {
             const now = new Date();
-            return now.toLocaleString();
+            const options = {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: true
+            };
+            return now.toLocaleString('es-ES', options).replace(/\./g, '').replace(',', '');
         }
 
         function formatCoordinates(latitude, longitude) {
