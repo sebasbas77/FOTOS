@@ -1,4 +1,4 @@
-}<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -80,6 +80,15 @@
             return `${Math.abs(latitude).toFixed(5)}${latDirection} ${Math.abs(longitude).toFixed(5)}${lonDirection}`;
         }
 
+        function formatAddress(data) {
+            const addressComponents = data.address;
+            const street = addressComponents.road || 'N/A';
+            const suburb = addressComponents.suburb || 'N/A';
+            const city = addressComponents.city || addressComponents.town || addressComponents.village || 'N/A';
+            const state = addressComponents.state || 'N/A';
+            return `${street}\n${suburb}\n${city}\n${state}`;
+        }
+
         function showPosition(position) {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
@@ -89,7 +98,8 @@
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('address').value = data.display_name;
+                    const formattedAddress = formatAddress(data);
+                    document.getElementById('address').value = formattedAddress;
                 })
                 .catch(error => {
                     document.getElementById('address').value = 'No se pudo obtener la dirección';
