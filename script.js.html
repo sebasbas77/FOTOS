@@ -1,0 +1,40 @@
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const snap = document.getElementById('snap');
+const context = canvas.getContext('2d');
+const watermark = document.getElementById('watermark');
+
+// Access the device camera and stream to video element
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        video.srcObject = stream;
+    })
+    .catch(err => {
+        console.error("Error accessing the camera: ", err);
+    });
+
+// Capture photo
+snap.addEventListener('click', () => {
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const watermarkText = watermark.innerHTML;
+    context.font = '12px Arial';
+    context.fillStyle = 'white';
+    context.textAlign = 'right';
+    context.shadowColor = 'black';
+    context.shadowOffsetX = 2;
+    context.shadowOffsetY = 2;
+    context.shadowBlur = 4;
+    
+    const lines = watermarkText.split('<br>');
+    let y = canvas.height - 10;
+    for (let i = lines.length - 1; i >= 0; i--) {
+        context.fillText(lines[i], canvas.width - 10, y);
+        y -= 15;
+    }
+
+    // Show the captured photo with watermark
+    const dataUrl = canvas.toDataURL();
+    const img = document.createElement('img');
+    img.src = dataUrl;
+    document.body.appendChild(img);
+});
