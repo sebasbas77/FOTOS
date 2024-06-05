@@ -56,6 +56,26 @@
         .field button:hover {
             background-color: #0056b3;
         }
+        .photo-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .photo-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .overlay-text {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
         @media (min-width: 768px) {
             .container {
                 max-width: 600px;
@@ -89,6 +109,16 @@
         </div>
         <div class="field">
             <button onclick="getCurrentData()">Obtener Datos Actuales</button>
+        </div>
+        <div class="field photo-container">
+            <input type="file" accept="image/*" capture="camera" onchange="showImage(event)">
+            <div id="image-wrapper">
+                <img id="photo" src="" alt="Foto">
+                <div id="overlay-text" class="overlay-text"></div>
+            </div>
+        </div>
+        <div class="field">
+            <button onclick="addDataToPhoto()">Añadir Datos a la Foto</button>
         </div>
     </div>
     
@@ -207,6 +237,18 @@
             } else {
                 alert("La geolocalización no es compatible con este navegador.");
             }
+        }
+
+        function showImage(event) {
+            const image = document.getElementById('photo');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            image.onload = () => URL.revokeObjectURL(image.src);
+        }
+
+        function addDataToPhoto() {
+            const completeAddress = document.getElementById('address').value;
+            const overlayText = document.getElementById('overlay-text');
+            overlayText.innerText = completeAddress;
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
