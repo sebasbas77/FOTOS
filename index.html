@@ -307,7 +307,7 @@
             lines.forEach(line => {
                 ctx.strokeText(line, x, y);
                 ctx.fillText(line, x, y);
-                y += fontSize + 10; // Espaciado entre líneas
+                y += fontSize + 1; // Espaciado entre líneas
             });
 
             requestAnimationFrame(drawCanvas);
@@ -368,7 +368,7 @@
                         lines.forEach(line => {
                             ctx.strokeText(line, x, y);
                             ctx.fillText(line, x, y);
-                            y += fontSize + 5; // Espaciado entre líneas
+                            y += fontSize + 1; // Espaciado entre líneas
                         });
 
                         const dataURL = canvas.toDataURL('image/png');
