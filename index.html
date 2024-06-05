@@ -60,7 +60,7 @@
         </div>
         <div class="field">
             <label for="address">Datos Completos:</label>
-            <textarea id="address" readonly></textarea>
+            <textarea id="full-data" readonly></textarea>
         </div>
     </div>
     
@@ -99,7 +99,7 @@
             const coordinates = document.getElementById('coordinates').value;
             const address = document.getElementById('address').value;
 
-            document.getElementById('address').value = `${dateTime}\n${coordinates}\n${address}`;
+            document.getElementById('full-data').value = `${dateTime}\n${coordinates}\n${address}`;
         }
 
         function showPosition(position) {
