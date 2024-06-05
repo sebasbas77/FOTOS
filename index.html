@@ -28,16 +28,18 @@
             font-weight: bold;
             margin-bottom: 5px;
         }
-        .field input {
+        .field input,
+        .field textarea,
+        .field button {
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
+            margin-bottom: 10px;
         }
-        .field textarea {
-            width: 100%;
-            height: 100px;
-            padding: 8px;
-            box-sizing: border-box;
+        .field button {
+            width: auto;
+            padding: 8px 16px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -47,10 +49,15 @@
         <div class="field">
             <label for="datetime">Fecha y Hora:</label>
             <input type="text" id="datetime" readonly>
+            <input type="datetime-local" id="edit-datetime">
+            <button onclick="updateDateTime()">Actualizar Fecha y Hora</button>
         </div>
         <div class="field">
             <label for="coordinates">Coordenadas Georreferenciales (Grados Decimales):</label>
             <input type="text" id="coordinates" readonly>
+            <input type="text" id="edit-latitude" placeholder="Latitud">
+            <input type="text" id="edit-longitude" placeholder="Longitud">
+            <button onclick="updateCoordinates()">Actualizar Coordenadas</button>
         </div>
         <div class="field">
             <label for="address">Dirección GPS:</label>
@@ -121,6 +128,36 @@
                 case error.UNKNOWN_ERROR:
                     alert("Se ha producido un error desconocido.");
                     break;
+            }
+        }
+
+        function updateDateTime() {
+            const inputDateTime = document.getElementById('edit-datetime').value;
+            if (inputDateTime) {
+                const date = new Date(inputDateTime);
+                const formattedDateTime = getCurrentDateTime.call({ now: date });
+                document.getElementById('datetime').value = formattedDateTime;
+            }
+        }
+
+        function updateCoordinates() {
+            const latitude = parseFloat(document.getElementById('edit-latitude').value);
+            const longitude = parseFloat(document.getElementById('edit-longitude').value);
+            if (!isNaN(latitude) && !isNaN(longitude)) {
+                const formattedCoordinates = formatCoordinates(latitude, longitude);
+                document.getElementById('coordinates').value = formattedCoordinates;
+
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const formattedAddress = formatAddress(data);
+                        document.getElementById('address').value = formattedAddress;
+                    })
+                    .catch(error => {
+                        document.getElementById('address').value = 'No se pudo obtener la dirección';
+                    });
+            } else {
+                alert('Por favor, ingrese coordenadas válidas.');
             }
         }
 
