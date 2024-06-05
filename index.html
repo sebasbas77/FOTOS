@@ -82,11 +82,12 @@
 
         function formatAddress(data) {
             const addressComponents = data.address;
-            const street = addressComponents.road || 'N/A';
-            const suburb = addressComponents.suburb || 'N/A';
-            const city = addressComponents.city || addressComponents.town || addressComponents.village || 'N/A';
-            const state = addressComponents.state || 'N/A';
-            return `${street}\n${suburb}\n${city}\n${state}`;
+            const street = addressComponents.road || '';
+            const neighborhood = addressComponents.neighbourhood || '';
+            const city = addressComponents.city || addressComponents.town || addressComponents.village || '';
+            const province = addressComponents.state || addressComponents.region || '';
+
+            return `${street}\n${neighborhood}\n${city}\n${province}`;
         }
 
         function showPosition(position) {
