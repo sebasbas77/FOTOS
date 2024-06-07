@@ -1,62 +1,93 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obtener Datos de Geolocalización y Fecha/Hora</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="container">
-        <h2>Obtener Datos de Geolocalización y Fecha/Hora</h2>
-        <div class="field-group">
-            <div class="field">
-                <label for="datetime">Fecha y Hora:</label>
-                <input type="text" id="datetime" readonly>
-                <input type="datetime-local" id="edit-datetime">
-            </div>
-            <div class="field-icon">
-                <button onclick="updateDateTime()">
-                    <img src="update-icon.png" alt="Actualizar">
-                </button>
-            </div>
-        </div>
-        <div class="field-group">
-            <div class="field">
-                <label for="coordinates">Coordenadas Georreferenciales (Grados Decimales):</label>
-                <input type="text" id="coordinates" readonly>
-                <input type="text" id="edit-coordinates" placeholder="Latitud, Longitud">
-            </div>
-            <div class="field-icon">
-                <button onclick="updateCoordinates()">
-                    <img src="update-icon.png" alt="Actualizar">
-                </button>
-            </div>
-        </div>
-        <div class="field-group">
-            <div class="field">
-                <label for="group">Grupo:</label>
-                <input type="text" id="group" value="PRO-01">
-            </div>
-            <div class="field">
-                <label for="contractor">Contratista:</label>
-                <input type="text" id="contractor" value="PROCISA">
-            </div>
-            <div class="field-icon">
-                <button onclick="updateGroupAndContractor()">
-                    <img src="update-icon.png" alt="Actualizar">
-                </button>
-            </div>
-        </div>
-        <div class="field">
-            <button onclick="getCurrentData()">Obtener Datos Actuales</button>
-        </div>
-        <div class="field">
-            <label for="address">Datos Completos:</label>
-            <textarea id="address" rows="6" readonly></textarea>
-        </div>
-    </div>
-    <script src="scripts.js"></script>
-</body>
-</html>
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 100%;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+h2 {
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.field-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.field {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.field label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.field input,
+.field textarea {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.field-icon {
+    display: flex;
+    align-items: center;
+}
+
+.field-icon button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.field-icon button img {
+    width: 24px;
+    height: 24px;
+}
+
+.field textarea {
+    resize: none;
+}
+
+button {
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 600px;
+        margin: 40px auto;
+    }
+}
