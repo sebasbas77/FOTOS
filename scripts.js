@@ -33,15 +33,18 @@ function formatAddress(data) {
 function updateCompleteAddress() {
     const dateTime = document.getElementById('datetime').value;
     const coordinates = document.getElementById('coordinates').value;
+    const address = document.getElementById('address').value;
     const group = document.getElementById('group').value.trim();
     const contractor = document.getElementById('contractor').value.trim();
 
-    const address = document.getElementById('address').value.split('\n');
+    // Split the address into lines and filter out any previous "Grupo" and "Contratista" lines
+    const lines = address.split('\n').filter(line => !line.startsWith('PRO-') && !line.startsWith('PROCISA'));
 
-    const newAddress = address.slice(0, address.findIndex(line => line.startsWith('PRO-') || line.startsWith('PROCISA')));
-    const updatedAddress = [...newAddress, group, contractor].filter(line => line.trim() !== '').join('\n');
+    // Keep only non-empty address lines
+    const addressLines = lines.slice(2).filter(line => line.trim() !== '');
+    const updatedAddress = `${dateTime}\n${coordinates}\n${addressLines.join('\n')}\n${group}\n${contractor}`;
 
-    document.getElementById('address').value = `${dateTime}\n${coordinates}\n${updatedAddress}`;
+    document.getElementById('address').value = updatedAddress;
 }
 
 function showPosition(position) {
