@@ -46,20 +46,27 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 100%;
 }
 
 .field-icon button {
     background-color: transparent;
     border: none;
     cursor: pointer;
-    font-size: 2em; /* Increase icon size */
+    font-size: 2em;  /* Increased size of the icon */
     color: #007BFF;
-    transition: transform 0.2s, color 0.2s; /* Add animation */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .field-icon button:hover {
     color: #0056b3;
-    transform: rotate(360deg); /* Rotate icon on hover */
+}
+
+.field-icon button:active {
+    transform: scale(0.9);
+    transition: transform 0.1s;
 }
 
 .field textarea {
@@ -78,7 +85,6 @@ button {
     display: block;
     width: 100%;
     margin-bottom: 15px;
-    transition: background-color 0.2s; /* Add animation */
 }
 
 button:hover {
