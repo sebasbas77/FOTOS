@@ -26,9 +26,20 @@
             <textarea id="address" rows="6" readonly></textarea>
         </div>
         <div class="field">
+            <label for="group">Grupo:</label>
+            <input type="text" id="group" value="PRO-01">
+        </div>
+        <div class="field">
+            <label for="contractor">Contratista:</label>
+            <input type="text" id="contractor" value="PROCISA">
+        </div>
+        <div class="field">
+            <button onclick="updateGroupAndContractor()">Actualizar Grupo y Contratista</button>
+        </div>
+        <div class="field">
             <button onclick="getCurrentData()">Obtener Datos Actuales</button>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>
