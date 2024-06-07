@@ -34,10 +34,12 @@ function updateCompleteAddress() {
     const dateTime = document.getElementById('datetime').value;
     const coordinates = document.getElementById('coordinates').value;
     const address = document.getElementById('address').value;
+    const group = document.getElementById('group').value.trim();
+    const contractor = document.getElementById('contractor').value.trim();
 
     const lines = address.split('\n');
     const addressLines = lines.slice(2).filter(line => line.trim() !== ''); // Keep only non-empty address lines
-    const updatedAddress = `${dateTime}\n${coordinates}\n${addressLines.join('\n')}`;
+    const updatedAddress = `${dateTime}\n${coordinates}\n${addressLines.join('\n')}\n${group}\n${contractor}`;
 
     document.getElementById('address').value = updatedAddress;
 }
@@ -58,7 +60,9 @@ function showPosition(position) {
         .then(data => {
             const formattedAddress = formatAddress(data);
             const dateTime = document.getElementById('datetime').value;
-            const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}`;
+            const group = document.getElementById('group').value.trim();
+            const contractor = document.getElementById('contractor').value.trim();
+            const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}\n${group}\n${contractor}`;
             document.getElementById('address').value = completeAddress;
         })
         .catch(error => {
@@ -86,58 +90,4 @@ function showError(error) {
 
 function updateDateTime() {
     const inputDateTime = document.getElementById('edit-datetime').value;
-    if (inputDateTime) {
-        const date = new Date(inputDateTime);
-        const formattedDateTime = getCurrentDateTime(date);
-        document.getElementById('datetime').value = formattedDateTime;
-        updateCompleteAddress();
-    } else {
-        alert('Por favor, ingrese una fecha y hora válidas.');
-    }
-}
-
-function updateCoordinates() {
-    const coordinatesInput = document.getElementById('edit-coordinates').value;
-    const [latitude, longitude] = coordinatesInput.split(',').map(coord => parseFloat(coord.trim()));
-    if (!isNaN(latitude) && !isNaN(longitude)) {
-        const formattedCoordinates = formatCoordinates(latitude, longitude);
-        document.getElementById('coordinates').value = formattedCoordinates;
-
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener la dirección');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const formattedAddress = formatAddress(data);
-                const dateTime = document.getElementById('datetime').value;
-                const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}`;
-                document.getElementById('address').value = completeAddress;
-            })
-            .catch(error => {
-                document.getElementById('address').value = 'No se pudo obtener la dirección';
-                console.error('Error:', error);
-            });
-    } else {
-        alert('Por favor, ingrese coordenadas válidas.');
-    }
-}
-
-function getCurrentData() {
-    document.getElementById('datetime').value = getCurrentDateTime();
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError, {
-            maximumAge: 60000,
-            timeout: 5000,
-            enableHighAccuracy: true
-        });
-    } else {
-        alert("La geolocalización no es compatible con este navegador.");
-    }
-}
-
-document.addEventListener('DOMContentLoaded', (event) => {
-    getCurrentData();
-});
+    if (
