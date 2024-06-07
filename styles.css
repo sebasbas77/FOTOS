@@ -45,6 +45,7 @@ body {
 .field-icon {
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .field-icon button {
@@ -54,14 +55,13 @@ body {
 }
 
 .field-icon button img {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
 }
 
 .field textarea {
     resize: none;
-    height: auto; /* Allow dynamic height */
-    overflow-y: auto; /* Allow scrolling if needed */
+    height: auto; /* Ensure the textarea grows to fit its content */
 }
 
 button {
