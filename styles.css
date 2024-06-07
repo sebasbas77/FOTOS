@@ -52,12 +52,14 @@ body {
     background-color: transparent;
     border: none;
     cursor: pointer;
-    font-size: 1.5em;
+    font-size: 2em; /* Increase icon size */
     color: #007BFF;
+    transition: transform 0.2s, color 0.2s; /* Add animation */
 }
 
 .field-icon button:hover {
     color: #0056b3;
+    transform: rotate(360deg); /* Rotate icon on hover */
 }
 
 .field textarea {
@@ -76,6 +78,7 @@ button {
     display: block;
     width: 100%;
     margin-bottom: 15px;
+    transition: background-color 0.2s; /* Add animation */
 }
 
 button:hover {
