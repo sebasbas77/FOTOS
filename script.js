@@ -136,7 +136,7 @@ function getCurrentData() {
             enableHighAccuracy: true
         });
     } else {
-        alert("La geolocalización no es compatible con este navegador.");
+        alert("La geolocalización no es compatible con este navegador. ");
     }
 }
 
