@@ -2,30 +2,30 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #f0f2f5;
 }
 
 .container {
     max-width: 100%;
     margin: 20px;
     padding: 20px;
+    border-radius: 10px;
 }
 
 h2 {
     text-align: center;
     font-size: 1.5em;
     margin-bottom: 20px;
-    color: #333;
+    color: #333333;
 }
 
 .card {
     background-color: #ffffff;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+    padding: 20px;
 }
 
 .field-group {
@@ -43,7 +43,7 @@ h2 {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
-    color: #333;
+    color: #333333;
 }
 
 .field input,
@@ -54,6 +54,7 @@ h2 {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 1em;
 }
 
 .field-icon {
