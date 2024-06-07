@@ -30,10 +30,18 @@ function formatAddress(data) {
 function updateCompleteAddress() {
     const dateTime = document.getElementById('datetime').value;
     const coordinates = document.getElementById('coordinates').value;
-    const address = document.getElementById('address').value.split('\n').slice(3).join('\n'); // Remove previous datetime and coordinates
+    const address = document.getElementById('address').value;
 
-    const completeAddress = `${dateTime}\n${coordinates}\n${address}`;
-    document.getElementById('address').value = completeAddress;
+    const lines = address.split('\n');
+    let updatedAddress = '';
+
+    if (lines.length >= 5) {
+        updatedAddress = `${dateTime}\n${coordinates}\n${lines.slice(2).join('\n')}`;
+    } else {
+        updatedAddress = `${dateTime}\n${coordinates}\n${lines.slice(2).join('\n')}`;
+    }
+
+    document.getElementById('address').value = updatedAddress;
 }
 
 function showPosition(position) {
