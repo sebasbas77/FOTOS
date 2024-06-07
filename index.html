@@ -56,34 +56,6 @@
         .field button:hover {
             background-color: #0056b3;
         }
-        .photo-container {
-            text-align: center;
-            margin-bottom: 15px;
-            position: relative;
-        }
-        .photo-container video,
-        .photo-container canvas {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        #canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .photos {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .photos img {
-            max-width: 150px;
-            margin: 5px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
         @media (min-width: 768px) {
             .container {
                 max-width: 600px;
@@ -112,39 +84,15 @@
             <button onclick="updateCoordinates()">Actualizar</button>
         </div>
         <div class="field">
-            <label for="group">Grupo:</label>
-            <input type="text" id="group" value="PR0-01">
-        </div>
-        <div class="field">
-            <label for="company">Empresa:</label>
-            <input type="text" id="company" value="PROCISA">
-        </div>
-        <div class="field">
             <label for="address">Datos Completos:</label>
             <textarea id="address" rows="6" readonly></textarea>
         </div>
         <div class="field">
             <button onclick="getCurrentData()">Obtener Datos Actuales</button>
         </div>
-        <div class="field photo-container">
-            <video id="video" autoplay></video>
-            <canvas id="canvas"></canvas>
-        </div>
-        <div class="field">
-            <button onclick="capturePhoto()">Capturar Foto</button>
-            <input type="file" id="file-input" accept="image/*" multiple>
-        </div>
-        <div class="photos" id="photos"></div>
-        <div class="field">
-            <button onclick="downloadAllPhotos()">Descargar Todas las Fotos</button>
-        </div>
     </div>
     
     <script>
-        const MAX_WIDTH = 800;
-        const MAX_HEIGHT = 600;
-        let photos = [];
-
         function getCurrentDateTime(date = new Date()) {
             const day = date.getDate();
             const month = date.toLocaleString('es-ES', { month: 'short' });
@@ -177,11 +125,9 @@
         function updateCompleteAddress() {
             const dateTime = document.getElementById('datetime').value;
             const coordinates = document.getElementById('coordinates').value;
-            const group = document.getElementById('group').value;
-            const company = document.getElementById('company').value;
             const address = document.getElementById('address').value.split('\n').slice(3).join('\n'); // Remove previous datetime and coordinates
 
-            const completeAddress = `${dateTime}\n${coordinates}\n${address}\n${group}\n${company}`;
+            const completeAddress = `${dateTime}\n${coordinates}\n${address}`;
             document.getElementById('address').value = completeAddress;
         }
 
@@ -192,17 +138,21 @@
             document.getElementById('coordinates').value = formattedCoordinates;
 
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener la dirección');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     const formattedAddress = formatAddress(data);
                     const dateTime = document.getElementById('datetime').value;
-                    const group = document.getElementById('group').value;
-                    const company = document.getElementById('company').value;
-                    const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}\n${group}\n${company}`;
+                    const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}`;
                     document.getElementById('address').value = completeAddress;
                 })
                 .catch(error => {
                     document.getElementById('address').value = 'No se pudo obtener la dirección';
+                    console.error('Error:', error);
                 });
         }
 
@@ -230,6 +180,8 @@
                 const formattedDateTime = getCurrentDateTime(date);
                 document.getElementById('datetime').value = formattedDateTime;
                 updateCompleteAddress();
+            } else {
+                alert('Por favor, ingrese una fecha y hora válidas.');
             }
         }
 
@@ -241,17 +193,21 @@
                 document.getElementById('coordinates').value = formattedCoordinates;
 
                 fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al obtener la dirección');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         const formattedAddress = formatAddress(data);
                         const dateTime = document.getElementById('datetime').value;
-                        const group = document.getElementById('group').value;
-                        const company = document.getElementById('company').value;
-                        const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}\n${group}\n${company}`;
+                        const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}`;
                         document.getElementById('address').value = completeAddress;
                     })
                     .catch(error => {
                         document.getElementById('address').value = 'No se pudo obtener la dirección';
+                        console.error('Error:', error);
                     });
             } else {
                 alert('Por favor, ingrese coordenadas válidas.');
@@ -261,152 +217,18 @@
         function getCurrentData() {
             document.getElementById('datetime').value = getCurrentDateTime();
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
+                navigator.geolocation.getCurrentPosition(showPosition, showError, {
+                    maximumAge: 60000,
+                    timeout: 5000,
+                    enableHighAccuracy: true
+                });
             } else {
                 alert("La geolocalización no es compatible con este navegador.");
             }
         }
 
-        function startCamera() {
-            const video = document.getElementById('video');
-            const constraints = {
-                video: {
-                    facingMode: 'environment'
-                }
-            };
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-                    video.srcObject = stream;
-                    video.play();
-                    video.onloadedmetadata = () => {
-                        drawCanvas();
-                    };
-                });
-            }
-        }
-
-        function drawCanvas() {
-            const canvas = document.getElementById('canvas');
-            const video = document.getElementById('video');
-            const ctx = canvas.getContext('2d');
-            const completeAddress = document.getElementById('address').value;
-
-            const aspectRatio = video.videoWidth / video.videoHeight;
-            let width = MAX_WIDTH;
-            let height = MAX_HEIGHT;
-
-            if (aspectRatio > 1) {
-                height = width / aspectRatio;
-            } else {
-                width = height * aspectRatio;
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // Ajustar el tamaño de la fuente basado en el tamaño de la imagen
-            const fontSize = Math.max(20, canvas.width * 0.02);
-            ctx.font = `${fontSize}px Arial`;
-            ctx.fillStyle = 'white';
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 2;
-
-            // Dividir el texto en líneas
-            const lines = completeAddress.split('\n');
-            const x = 15; // Ajustar la posición x del texto
-            let y = canvas.height - 3 - (lines.length - 1) * (fontSize + 3); // Ajustar la posición inicial del texto
-
-            lines.forEach(line => {
-                ctx.strokeText(line, x, y);
-                ctx.fillText(line, x, y);
-                y += fontSize + 1; // Espaciado entre líneas
-            });
-
-            requestAnimationFrame(drawCanvas);
-        }
-
-        function capturePhoto() {
-            const canvas = document.getElementById('canvas');
-            const dataURL = canvas.toDataURL('image/png');
-            addPhotoToGallery(dataURL);
-        }
-
-        function addPhotoToGallery(dataURL) {
-            const photosContainer = document.getElementById('photos');
-            const img = document.createElement('img');
-            img.src = dataURL;
-            photosContainer.appendChild(img);
-            photos.push(dataURL);
-        }
-
-        function handleFileSelect(event) {
-            const files = event.target.files;
-            for (let i = 0; i < files.length; i++) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        const completeAddress = document.getElementById('address').value;
-
-                        const aspectRatio = img.width / img.height;
-                        let width = MAX_WIDTH;
-                        let height = MAX_HEIGHT;
-
-                        if (aspectRatio > 1) {
-                            height = width / aspectRatio;
-                        } else {
-                            width = height * aspectRatio;
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                        // Ajustar el tamaño de la fuente basado en el tamaño de la imagen
-                        const fontSize = Math.max(20, canvas.width * 0.02);
-                        ctx.font = `${fontSize}px Arial`;
-                        ctx.fillStyle = 'white';
-                        ctx.strokeStyle = 'black';
-                        ctx.lineWidth = 2;
-
-                        // Dividir el texto en líneas
-                        const lines = completeAddress.split('\n');
-                        const x = 15; // Ajustar la posición x del texto
-                        let y = canvas.height - 3 - (lines.length - 1) * (fontSize + 3); // Ajustar la posición inicial del texto
-
-                        lines.forEach(line => {
-                            ctx.strokeText(line, x, y);
-                            ctx.fillText(line, x, y);
-                            y += fontSize + 1; // Espaciado entre líneas
-                        });
-
-                        const dataURL = canvas.toDataURL('image/png');
-                        addPhotoToGallery(dataURL);
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(files[i]);
-            }
-        }
-
-        function downloadAllPhotos() {
-            photos.forEach((photo, index) => {
-                const link = document.createElement('a');
-                link.href = photo;
-                link.download = `imagen_rotulada_${index + 1}.png`;
-                link.click();
-            });
-        }
-
         document.addEventListener('DOMContentLoaded', (event) => {
             getCurrentData();
-            startCamera();
-            document.getElementById('file-input').addEventListener('change', handleFileSelect);
         });
     </script>
 </body>
