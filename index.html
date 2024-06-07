@@ -4,22 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Obtener Datos de Geolocalización y Fecha/Hora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <h2>Obtener Datos de Geolocalización y Fecha/Hora</h2>
-        <div class="field">
-            <label for="datetime">Fecha y Hora:</label>
-            <input type="text" id="datetime" readonly>
-            <input type="datetime-local" id="edit-datetime">
-            <button onclick="updateDateTime()">Actualizar</button>
+        <div class="field-group">
+            <div class="field">
+                <label for="datetime">Fecha y Hora:</label>
+                <input type="text" id="datetime" readonly>
+                <input type="datetime-local" id="edit-datetime">
+            </div>
+            <div class="field-icon">
+                <button onclick="updateDateTime()">
+                    <img src="update-icon.png" alt="Actualizar">
+                </button>
+            </div>
         </div>
-        <div class="field">
-            <label for="coordinates">Coordenadas Georreferenciales (Grados Decimales):</label>
-            <input type="text" id="coordinates" readonly>
-            <input type="text" id="edit-coordinates" placeholder="Latitud, Longitud">
-            <button onclick="updateCoordinates()">Actualizar</button>
+        <div class="field-group">
+            <div class="field">
+                <label for="coordinates">Coordenadas Georreferenciales (Grados Decimales):</label>
+                <input type="text" id="coordinates" readonly>
+                <input type="text" id="edit-coordinates" placeholder="Latitud, Longitud">
+            </div>
+            <div class="field-icon">
+                <button onclick="updateCoordinates()">
+                    <img src="update-icon.png" alt="Actualizar">
+                </button>
+            </div>
         </div>
         <div class="field-group">
             <div class="field">
@@ -30,8 +43,10 @@
                 <label for="contractor">Contratista:</label>
                 <input type="text" id="contractor" value="PROCISA">
             </div>
-            <div class="field">
-                <button onclick="updateGroupAndContractor()">Actualizar Grupo y Contratista</button>
+            <div class="field-icon">
+                <button onclick="updateGroupAndContractor()">
+                    <img src="update-icon.png" alt="Actualizar">
+                </button>
             </div>
         </div>
         <div class="field">
