@@ -50,25 +50,26 @@ body {
 }
 
 .field-icon button {
-    background-color: transparent;
+    background-color: #007BFF;
     border: none;
     cursor: pointer;
-    font-size: 2em;  /* Increased size of the icon */
-    color: #007BFF;
+    font-size: 1.5em;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0; /* Remove padding */
-    transition: transform 0.1s, color 0.1s;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s, transform 0.1s;
 }
 
 .field-icon button:hover {
-    color: #0056b3;
+    background-color: #0056b3;
 }
 
 .field-icon button:active {
+    background-color: #004080;
     transform: scale(0.9);
-    color: #003f8a; /* Change to a slightly darker color */
 }
 
 .field-icon button:focus {
@@ -92,7 +93,7 @@ button {
     display: block;
     width: 100%;
     margin-bottom: 15px;
-    transition: background-color 0.1s, transform 0.1s;
+    transition: background-color 0.3s, transform 0.1s;
 }
 
 button:hover {
@@ -100,7 +101,7 @@ button:hover {
 }
 
 button:active {
-    background-color: #003f8a; /* Change to a slightly darker color */
+    background-color: #004080;
     transform: scale(0.98);
 }
 
