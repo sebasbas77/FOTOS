@@ -15,12 +15,6 @@ body {
     background-color: #fff;
 }
 
-h2 {
-    text-align: center;
-    font-size: 1.2em;
-    margin-bottom: 20px;
-}
-
 .field-group {
     display: flex;
     align-items: center;
@@ -60,12 +54,14 @@ h2 {
 }
 
 .field-icon button img {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
 }
 
 .field textarea {
     resize: none;
+    height: auto; /* Allow dynamic height */
+    overflow-y: auto; /* Allow scrolling if needed */
 }
 
 button {
