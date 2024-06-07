@@ -19,12 +19,15 @@ function formatCoordinates(latitude, longitude) {
 
 function formatAddress(data) {
     const addressComponents = data.address;
-    const street = addressComponents.road || '';
-    const neighborhood = addressComponents.neighbourhood || '';
-    const city = addressComponents.city || addressComponents.town || addressComponents.village || '';
-    const province = addressComponents.state || addressComponents.region || '';
+    const parts = [
+        addressComponents.road || '',
+        addressComponents.neighbourhood || '',
+        addressComponents.city || addressComponents.town || addressComponents.village || '',
+        addressComponents.state || addressComponents.region || ''
+    ];
 
-    return `${street}\n${neighborhood}\n${city}\n${province}`;
+    // Filter out empty parts and join with newline
+    return parts.filter(part => part.trim() !== '').join('\n');
 }
 
 function updateCompleteAddress() {
@@ -33,13 +36,8 @@ function updateCompleteAddress() {
     const address = document.getElementById('address').value;
 
     const lines = address.split('\n');
-    let updatedAddress = '';
-
-    if (lines.length >= 5) {
-        updatedAddress = `${dateTime}\n${coordinates}\n${lines.slice(2).join('\n')}`;
-    } else {
-        updatedAddress = `${dateTime}\n${coordinates}\n${lines.slice(2).join('\n')}`;
-    }
+    const addressLines = lines.slice(2).filter(line => line.trim() !== ''); // Keep only non-empty address lines
+    const updatedAddress = `${dateTime}\n${coordinates}\n${addressLines.join('\n')}`;
 
     document.getElementById('address').value = updatedAddress;
 }
@@ -136,7 +134,7 @@ function getCurrentData() {
             enableHighAccuracy: true
         });
     } else {
-        alert("La geolocalización no es compatible con este navegador. ");
+        alert("La geolocalización no es compatible con este navegador.");
     }
 }
 
