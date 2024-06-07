@@ -52,11 +52,12 @@ body {
     background-color: transparent;
     border: none;
     cursor: pointer;
+    font-size: 1.5em;
+    color: #007BFF;
 }
 
-.field-icon button img {
-    width: 32px;
-    height: 32px;
+.field-icon button:hover {
+    color: #0056b3;
 }
 
 .field textarea {
