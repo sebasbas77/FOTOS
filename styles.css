@@ -58,6 +58,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0; /* Remove padding */
 }
 
 .field-icon button:hover {
@@ -67,6 +68,7 @@ body {
 .field-icon button:active {
     transform: scale(0.9);
     transition: transform 0.1s;
+    color: #0056b3; /* Keep the color consistent */
 }
 
 .field textarea {
