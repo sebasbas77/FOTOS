@@ -4,6 +4,7 @@ body {
     padding: 0;
     background-color: #f4f4f4;
 }
+
 .container {
     max-width: 100%;
     margin: 20px;
@@ -13,19 +14,23 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: #fff;
 }
+
 h2 {
     text-align: center;
     font-size: 1.5em;
     margin-bottom: 20px;
 }
+
 .field {
     margin-bottom: 15px;
 }
+
 .field label {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
 }
+
 .field input,
 .field textarea,
 .field button {
@@ -36,6 +41,7 @@ h2 {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+
 .field button {
     width: 100%;
     padding: 10px;
@@ -46,9 +52,22 @@ h2 {
     cursor: pointer;
     font-size: 1em;
 }
+
 .field button:hover {
     background-color: #0056b3;
 }
+
+.field-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.field-group .field {
+    flex: 1;
+    min-width: 45%;
+}
+
 @media (min-width: 768px) {
     .container {
         max-width: 600px;
