@@ -65,10 +65,10 @@ body {
     color: #0056b3;
 }
 
-.field-icon button:active {
-    transform: scale(0.9);
-    transition: transform 0.1s;
-    color: #0056b3; /* Keep the color consistent */
+.field-icon button:focus, .field-icon button:active {
+    outline: none;
+    box-shadow: none;
+    color: #0056b3;
 }
 
 .field textarea {
@@ -91,6 +91,11 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+
+button:focus, button:active {
+    outline: none;
+    box-shadow: none;
 }
 
 @media (min-width: 768px) {
