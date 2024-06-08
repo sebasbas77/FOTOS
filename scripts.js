@@ -1,3 +1,6 @@
+let initialDateTime = '';
+let initialCoordinates = '';
+
 function getCurrentDateTime(date = new Date()) {
     const day = date.getDate();
     const month = date.toLocaleString('es-ES', { month: 'short' });
@@ -52,6 +55,7 @@ function showPosition(position) {
     const longitude = position.coords.longitude;
     const formattedCoordinates = formatCoordinates(latitude, longitude);
     document.getElementById('coordinates').value = formattedCoordinates;
+    initialCoordinates = formattedCoordinates; // Set initial coordinates
 
     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
         .then(response => {
@@ -104,15 +108,18 @@ function updateDateTime() {
 
 function updateCoordinates() {
     const coordinatesInput = document.getElementById('edit-coordinates').value;
-    const [latitude, longitude] = coordinatesInput.split(',').map(coord => parseFloat(coord.trim()));
-    if (!isNaN(latitude) && !isNaN(longitude)) {
-        const formattedCoordinates = formatCoordinates(latitude, longitude);
-        document.getElementById('coordinates').value = formattedCoordinates;
-        return true;
-    } else {
-        alert('Por favor, ingrese coordenadas válidas.');
-        return false;
+    if (coordinatesInput) {
+        const [latitude, longitude] = coordinatesInput.split(',').map(coord => parseFloat(coord.trim()));
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+            const formattedCoordinates = formatCoordinates(latitude, longitude);
+            document.getElementById('coordinates').value = formattedCoordinates;
+            return true;
+        } else {
+            alert('Por favor, ingrese coordenadas válidas.');
+            return false;
+        }
     }
+    return false;
 }
 
 function updateGroupAndContractor() {
@@ -122,7 +129,10 @@ function updateGroupAndContractor() {
 }
 
 function getCurrentData() {
-    document.getElementById('datetime').value = getCurrentDateTime();
+    const currentDateTime = getCurrentDateTime();
+    document.getElementById('datetime').value = currentDateTime;
+    initialDateTime = currentDateTime; // Set initial date/time
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition, showError, {
             maximumAge: 60000,
@@ -132,16 +142,23 @@ function getCurrentData() {
     } else {
         alert("La geolocalización no es compatible con este navegador.");
     }
+
+    // Clear the input fields for date/time and coordinates
+    document.getElementById('edit-datetime').value = '';
+    document.getElementById('edit-coordinates').value = '';
 }
 
 function applyUpdates() {
     let updated = false;
 
+    const currentDateTime = document.getElementById('datetime').value;
+    const currentCoordinates = document.getElementById('coordinates').value;
+
     const isDateTimeUpdated = updateDateTime();
-    if (isDateTimeUpdated) updated = true;
+    if (isDateTimeUpdated || currentDateTime !== initialDateTime) updated = true;
 
     const isCoordinatesUpdated = updateCoordinates();
-    if (isCoordinatesUpdated) updated = true;
+    if (isCoordinatesUpdated || currentCoordinates !== initialCoordinates) updated = true;
 
     const { group, contractor } = updateGroupAndContractor();
     if (group !== "PRO-01" || contractor !== "PROCISA") updated = true;
