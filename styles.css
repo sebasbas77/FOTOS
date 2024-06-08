@@ -54,8 +54,6 @@ body {
 
 button {
     padding: 10px;
-    background-color: #007BFF;
-    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -66,18 +64,43 @@ button {
     transition: background-color 0.3s, transform 0.1s;
 }
 
-button:hover {
-    background-color: #0056b3;
-}
-
-button:active {
-    background-color: #004080; /* Keep the same background color on active */
-    transform: scale(0.98);
-}
-
 button:focus {
     outline: none;
     box-shadow: none;
+}
+
+button:hover {
+    transform: scale(0.98);
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+.btn-blue {
+    background-color: #007BFF;
+    color: white;
+}
+
+.btn-blue:hover {
+    background-color: #0056b3;
+}
+
+.btn-blue:active {
+    background-color: #004080;
+}
+
+.btn-red {
+    background-color: #FF0000;
+    color: white;
+}
+
+.btn-red:hover {
+    background-color: #cc0000;
+}
+
+.btn-red:active {
+    background-color: #990000;
 }
 
 @media (min-width: 768px) {
