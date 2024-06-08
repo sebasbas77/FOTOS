@@ -270,8 +270,8 @@ function startCamera() {
     navigator.mediaDevices.getUserMedia({
         video: {
             facingMode: { exact: "environment" },
-            width: { ideal: 1920 }, // Ideal resolution width
-            height: { ideal: 1080 } // Ideal resolution height
+            width: { ideal: window.innerWidth }, // Ideal resolution width based on screen width
+            height: { ideal: window.innerHeight } // Ideal resolution height based on screen height
         }
     })
     .then(stream => {
