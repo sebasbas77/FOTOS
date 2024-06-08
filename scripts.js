@@ -251,67 +251,13 @@ function takePhoto() {
         const url = URL.createObjectURL(blob);
         const img = document.createElement('img');
         img.src = url;
+        img.className = 'thumbnail'; // Optional: Add a class for styling
         document.getElementById('photoGallery').appendChild(img);
         photos.push(blob);
-    });
-}
-
-// Initialize Google API client
-function initClient() {
-    gapi.load('client:auth2', () => {
-        gapi.client.init({
-            apiKey: 'YOUR_API_KEY',
-            clientId: 'YOUR_CLIENT_ID',
-            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-            scope: 'https://www.googleapis.com/auth/drive.file'
-        }).then(() => {
-            // Sign in the user if they are not signed in
-            if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
-                gapi.auth2.getAuthInstance().signIn();
-            }
-        }).catch(error => {
-            console.error('Error initializing Google API client:', error);
-        });
-    });
-}
-
-// Upload photos to Google Drive
-function uploadPhotosToDrive() {
-    if (photos.length === 0) {
-        alert('No hay fotos para subir.');
-        return;
-    }
-
-    photos.forEach((photo, index) => {
-        const metadata = {
-            name: `photo_${index + 1}.png`,
-            mimeType: 'image/png'
-        };
-
-        const formData = new FormData();
-        formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-        formData.append('file', photo);
-
-        gapi.client.request({
-            path: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
-            method: 'POST',
-            params: {
-                uploadType: 'multipart'
-            },
-            headers: {
-                'Content-Type': 'multipart/related'
-            },
-            body: formData
-        }).then(response => {
-            console.log(`Photo ${index + 1} uploaded:`, response);
-        }).catch(error => {
-            console.error(`Error uploading photo ${index + 1}:`, error);
-        });
     });
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
     getCurrentData();
     startCamera();
-    initClient();
 });
