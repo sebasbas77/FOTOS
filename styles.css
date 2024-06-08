@@ -118,34 +118,23 @@ button:active {
     background-color: #1e7e34;
 }
 
-.btn-yellow {
-    background-color: #ffc107;
+.btn-camera {
+    background-color: #007BFF;
     color: white;
-    width: 48%;
-    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin: 5px;
 }
 
-.btn-yellow:hover {
-    background-color: #e0a800;
+.btn-camera:hover {
+    background-color: #0056b3;
 }
 
-.btn-yellow:active {
-    background-color: #c69500;
-}
-
-.btn-orange {
-    background-color: #fd7e14;
-    color: white;
-    width: 48%;
-    margin-top: 10px;
-}
-
-.btn-orange:hover {
-    background-color: #e85d04;
-}
-
-.btn-orange:active {
-    background-color: #dc2f02;
+.btn-camera:active {
+    background-color: #004080;
 }
 
 .camera-container {
@@ -172,9 +161,9 @@ video {
     font-size: 0.8em;
 }
 
-.camera-controls {
+.camera-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin-top: 10px;
 }
 
