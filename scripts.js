@@ -168,6 +168,48 @@ function applyUpdates() {
     }
 }
 
+function startCamera() {
+    const video = document.getElementById('camera');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(error => {
+            console.error('Error accessing the camera:', error);
+        });
+}
+
+function takePhoto() {
+    const video = document.getElementById('camera');
+    const canvas = document.getElementById('photoCanvas');
+    const overlayText = document.getElementById('address').value;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Add overlay text
+    context.font = '16px Arial';
+    context.fillStyle = 'white';
+    context.textAlign = 'right';
+    const lines = overlayText.split('\n');
+    let y = canvas.height - 20;
+    lines.reverse().forEach(line => {
+        context.fillText(line, canvas.width - 10, y);
+        y -= 20;
+    });
+
+    // Convert canvas to image and download
+    const dataURL = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'photo.png';
+    link.click();
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
     getCurrentData();
+    startCamera();
 });
