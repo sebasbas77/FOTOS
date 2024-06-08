@@ -148,6 +148,7 @@ function updateCompleteAddress() {
     const updatedAddress = `${dateTime}\n${coordinates}\n${addressLines.join('\n')}\n${group}\n${contractor}`;
 
     document.getElementById('address').value = updatedAddress;
+    document.getElementById('overlayText').innerText = updatedAddress; // Update overlay text
 }
 
 function showPosition(position) {
@@ -171,9 +172,11 @@ function showPosition(position) {
             const contractor = document.getElementById('contractor').value.trim();
             const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}\n${group}\n${contractor}`;
             document.getElementById('address').value = completeAddress;
+            document.getElementById('overlayText').innerText = completeAddress; // Update overlay text
         })
         .catch(error => {
             document.getElementById('address').value = 'No se pudo obtener la dirección';
+            document.getElementById('overlayText').innerText = 'No se pudo obtener la dirección'; // Update overlay text
             console.error('Error:', error);
         });
 }
