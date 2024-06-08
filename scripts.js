@@ -97,10 +97,9 @@ function updateDateTime() {
         const date = new Date(inputDateTime);
         const formattedDateTime = getCurrentDateTime(date);
         document.getElementById('datetime').value = formattedDateTime;
-        updateCompleteAddress();
-    } else {
-        alert('Por favor, ingrese una fecha y hora válidas.');
+        return true;
     }
+    return false;
 }
 
 function updateCoordinates() {
@@ -109,29 +108,17 @@ function updateCoordinates() {
     if (!isNaN(latitude) && !isNaN(longitude)) {
         const formattedCoordinates = formatCoordinates(latitude, longitude);
         document.getElementById('coordinates').value = formattedCoordinates;
-
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener la dirección');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const formattedAddress = formatAddress(data);
-                const dateTime = document.getElementById('datetime').value;
-                const group = document.getElementById('group').value.trim();
-                const contractor = document.getElementById('contractor').value.trim();
-                const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}\n${group}\n${contractor}`;
-                document.getElementById('address').value = completeAddress;
-            })
-            .catch(error => {
-                document.getElementById('address').value = 'No se pudo obtener la dirección';
-                console.error('Error:', error);
-            });
+        return true;
     } else {
         alert('Por favor, ingrese coordenadas válidas.');
+        return false;
     }
+}
+
+function updateGroupAndContractor() {
+    const group = document.getElementById('group').value.trim();
+    const contractor = document.getElementById('contractor').value.trim();
+    return { group, contractor };
 }
 
 function getCurrentData() {
@@ -148,9 +135,20 @@ function getCurrentData() {
 }
 
 function applyUpdates() {
-    updateDateTime();
-    updateCoordinates();
-    updateCompleteAddress();
+    let updated = false;
+
+    const isDateTimeUpdated = updateDateTime();
+    if (isDateTimeUpdated) updated = true;
+
+    const isCoordinatesUpdated = updateCoordinates();
+    if (isCoordinatesUpdated) updated = true;
+
+    const { group, contractor } = updateGroupAndContractor();
+    if (group !== "PRO-01" || contractor !== "PROCISA") updated = true;
+
+    if (updated) {
+        updateCompleteAddress();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
