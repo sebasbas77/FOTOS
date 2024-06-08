@@ -1,5 +1,6 @@
 let initialDateTime = '';
 let initialCoordinates = '';
+let videoStream = null;
 
 function getCurrentDateTime(date = new Date()) {
     const day = date.getDate();
@@ -171,13 +172,42 @@ function applyUpdates() {
 function startCamera() {
     const video = document.getElementById('camera');
 
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-            video.srcObject = stream;
-        })
-        .catch(error => {
-            console.error('Error accessing the camera:', error);
+    navigator.mediaDevices.getUserMedia({
+        video: {
+            facingMode: { exact: "environment" } // Use the back camera
+        }
+    })
+    .then(stream => {
+        videoStream = stream;
+        video.srcObject = stream;
+    })
+    .catch(error => {
+        console.error('Error accessing the camera:', error);
+    });
+}
+
+function toggleFlash() {
+    const track = videoStream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities();
+    if (capabilities.torch) {
+        track.applyConstraints({
+            advanced: [{ torch: !track.getSettings().torch }]
         });
+    } else {
+        alert("El flash no es compatible con esta cámara.");
+    }
+}
+
+function focusCamera() {
+    const track = videoStream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities();
+    if (capabilities.focusMode) {
+        track.applyConstraints({
+            advanced: [{ focusMode: "continuous" }]
+        });
+    } else {
+        alert("El enfoque no es compatible con esta cámara.");
+    }
 }
 
 function takePhoto() {
