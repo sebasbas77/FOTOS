@@ -42,6 +42,11 @@
             <label for="address">Datos Completos:</label>
             <textarea id="address" rows="6" readonly></textarea>
         </div>
+        <div class="camera-container">
+            <video id="video" autoplay></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <button class="btn-blue" onclick="takePhoto()">Tomar Fotografía</button>
+        </div>
     </div>
     <script src="scripts.js"></script>
 </body>
