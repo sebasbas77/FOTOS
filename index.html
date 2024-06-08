@@ -11,16 +11,16 @@
 <body>
     <div class="container">
         <div class="card">
-            <div class="camera-container" id="cameraContainer" onclick="focusCamera()">
+            <div class="camera-container" id="cameraContainer">
                 <video id="camera" autoplay></video>
                 <div class="overlay" id="overlay"></div>
                 <div class="camera-controls">
                     <button class="btn-camera" id="flashButton" onclick="toggleFlash()"><i class="fas fa-bolt"></i></button>
+                    <button class="btn-green" onclick="takePhoto()">TOMAR FOTO</button>
                     <input type="range" id="zoomSlider" min="1" max="3" step="0.1" value="1" onchange="applyZoom()">
                 </div>
                 <div class="overlay-text" id="overlayText"></div>
             </div>
-            <button class="btn-green" onclick="takePhoto()">TOMAR FOTO</button>
         </div>
         <div class="card">
             <div class="field-group">
