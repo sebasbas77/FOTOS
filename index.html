@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos Geolocalización y Fecha/Hora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="camera-container" id="cameraContainer" onclick="focusCamera()">
+                <video id="camera" autoplay></video>
+                <div class="overlay" id="overlay"></div>
+                <div class="camera-controls">
+                    <button class="btn-camera" id="flashButton" onclick="toggleFlash()"><i class="fas fa-bolt"></i></button>
+                    <input type="range" id="zoomSlider" min="1" max="3" step="0.1" value="1" onchange="applyZoom()">
+                </div>
+                <div class="overlay-text" id="overlayText"></div>
+                <button class="btn-green" onclick="takePhoto()">TOMAR FOTO</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="field-group">
+                <div class="field">
+                    <label for="datetime">Fecha/Hora:</label>
+                    <input type="text" id="datetime" readonly>
+                    <input type="datetime-local" id="edit-datetime">
+                </div>
+            </div>
+            <div class="field-group">
+                <div class="field">
+                    <label for="coordinates">Coordenadas:</label>
+                    <input type="text" id="coordinates" readonly>
+                    <input type="text" id="edit-coordinates" placeholder="Lat, Long">
+                </div>
+            </div>
+            <div class="field-group">
+                <div class="field">
+                    <label for="group">Grupo:</label>
+                    <input type="text" id="group" value="PRO-01">
+                </div>
+                <div class="field">
+                    <label for="contractor">Contratista:</label>
+                    <input type="text" id="contractor" value="PROCISA">
+                </div>
+            </div>
+            <div class="field-group buttons">
+                <button class="btn-blue" onclick="getCurrentData()">ACTUALIZAR</button>
+                <button class="btn-red" onclick="applyUpdates()">APLICAR</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="photo-gallery" id="photoGallery"></div>
+            <canvas id="photoCanvas" style="display: none;"></canvas>
+            <div class="field-group buttons">
+                <button class="btn-blue" onclick="clearPhotos()">VACIAR</button>
+                <button class="btn-green" onclick="sharePhotos()">COMPARTIR</button>
+            </div>
+        </div>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
