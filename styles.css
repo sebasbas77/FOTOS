@@ -147,9 +147,9 @@ button:active {
 .camera-container {
     position: relative;
     width: 100%;
-    max-width: 600px;
+    max-width: 800px; /* Increased size for better visibility */
     margin: 20px auto;
-    height: 450px;
+    height: 600px; /* Increased size for better visibility */
 }
 
 video {
@@ -163,7 +163,7 @@ video {
 .overlay {
     position: absolute;
     bottom: 10px;
-    left: 10px;
+    right: 10px;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
@@ -190,12 +190,12 @@ video {
 .overlay-text {
     position: absolute;
     bottom: 10px;
-    left: 10px;
+    right: 10px;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 0.8em;
-    text-align: left; /* Align the text to the left */
+    text-align: right; /* Align the text to the right */
 }
 
 .photo-gallery {
@@ -216,8 +216,7 @@ video {
 
 @media (min-width: 768px) {
     .container {
-        max-width: 600px;
+        max-width: 800px; /* Increased size for better visibility */
         margin: 40px auto;
     }
 }
-
