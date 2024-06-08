@@ -1,261 +1,374 @@
-body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
+let initialDateTime = '';
+let initialCoordinates = '';
+let videoStream = null;
+const photos = [];
+
+// Open IndexedDB
+let db;
+const request = indexedDB.open('photoDB', 1);
+
+request.onerror = function(event) {
+    console.error('Database error:', event.target.error);
+};
+
+request.onsuccess = function(event) {
+    db = event.target.result;
+    loadPhotosFromDB();
+};
+
+request.onupgradeneeded = function(event) {
+    db = event.target.result;
+    const objectStore = db.createObjectStore('photos', { keyPath: 'id', autoIncrement: true });
+    objectStore.createIndex('base64', 'base64', { unique: false });
+};
+
+function savePhotoToDB(photo) {
+    const transaction = db.transaction(['photos'], 'readwrite');
+    const objectStore = transaction.objectStore('photos');
+    const request = objectStore.add({ base64: photo });
+
+    request.onsuccess = function() {
+        console.log('Photo saved to DB');
+    };
+
+    request.onerror = function(event) {
+        console.error('Error saving photo to DB:', event.target.error);
+    };
 }
 
-.camera-container {
-    position: relative;
-    width: 100%;
-    height: calc(100vh - 80px); /* Adjust height to fit the viewport minus some space for the button */
-    overflow: hidden;
-    margin-bottom: 20px;
+function loadPhotosFromDB() {
+    const transaction = db.transaction(['photos'], 'readonly');
+    const objectStore = transaction.objectStore('photos');
+    const request = objectStore.openCursor();
+
+    request.onsuccess = function(event) {
+        const cursor = event.target.result;
+        if (cursor) {
+            displayPhoto(cursor.value.base64, cursor.value.id);
+            cursor.continue();
+        }
+    };
+
+    request.onerror = function(event) {
+        console.error('Error loading photos from DB:', event.target.error);
+    };
 }
 
-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+function clearPhotos() {
+    const transaction = db.transaction(['photos'], 'readwrite');
+    const objectStore = transaction.objectStore('photos');
+    const request = objectStore.clear();
+
+    request.onsuccess = function() {
+        console.log('All photos cleared from DB');
+        document.getElementById('photoGallery').innerHTML = '';
+        photos.length = 0; // Clear the photos array
+    };
+
+    request.onerror = function(event) {
+        console.error('Error clearing photos from DB:', event.target.error);
+    };
 }
 
-.overlay {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.8em;
-    text-align: right;
+function sharePhotos() {
+    if (!navigator.share) {
+        alert('Web Share API no soportada en este navegador.');
+        return;
+    }
+
+    const files = photos.map((base64, index) => {
+        const byteString = atob(base64.split(',')[1]);
+        const mimeString = base64.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mimeString });
+        return new File([blob], `photo_${index + 1}.png`, { type: mimeString });
+    });
+
+    navigator.share({
+        files: files,
+        title: 'Fotos de la galería',
+        text: 'Compartir fotos desde la aplicación web.'
+    }).catch((error) => console.error('Error sharing:', error));
 }
 
-.camera-controls {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+function displayPhoto(photo, id) {
+    const img = document.createElement('img');
+    img.src = photo;
+    img.className = 'thumbnail';
+    img.style.objectFit = 'contain';
+    img.dataset.id = id; // Store the ID for potential use
+    document.getElementById('photoGallery').appendChild(img);
+    photos.push(photo);
 }
 
-#zoomSlider {
-    margin-top: 10px;
-    writing-mode: bt-lr; /* This makes the slider vertical */
-    -webkit-appearance: slider-vertical; /* For Safari */
-    width: 8px;
-    height: 150px; /* Increase height for better control */
+function getCurrentDateTime(date = new Date()) {
+    const day = date.getDate();
+    const month = date.toLocaleString('es-ES', { month: 'short' });
+    const year = date.getFullYear();
+
+    const hours = date.getHours() % 12 || 12;
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const ampm = date.getHours() >= 12 ? 'p. m.' : 'a. m.';
+
+    return `${day}. ${month} ${year} ${hours}:${minutes}:${seconds} ${ampm}`;
 }
 
-#zoomSlider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 15px;
-    height: 15px;
-    background: #007BFF;
-    cursor: pointer;
-    border-radius: 50%;
+function formatCoordinates(latitude, longitude) {
+    const latDirection = latitude >= 0 ? 'N' : 'S';
+    const lonDirection = longitude >= 0 ? 'E' : 'W';
+    return `${Math.abs(latitude).toFixed(5)}${latDirection} ${Math.abs(longitude).toFixed(5)}${lonDirection}`;
 }
 
-#zoomSlider::-moz-range-thumb {
-    width: 15px;
-    height: 15px;
-    background: #007BFF;
-    cursor: pointer;
-    border-radius: 50%;
+function formatAddress(data) {
+    const addressComponents = data.address;
+    const parts = [
+        addressComponents.road || '',
+        addressComponents.neighbourhood || '',
+        addressComponents.city || addressComponents.town || addressComponents.village || '',
+        addressComponents.state || addressComponents.region || ''
+    ];
+
+    return parts.filter(part => part.trim() !== '').join('\n');
 }
 
-#takePhotoButton {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.2em;
-    text-align: center;
-    margin: 0 auto 20px auto;
+function updateCompleteAddress() {
+    const dateTime = document.getElementById('datetime').value;
+    const coordinates = document.getElementById('coordinates').value;
+    const group = document.getElementById('group').value.trim();
+    const contractor = document.getElementById('contractor').value.trim();
+
+    const updatedAddress = `${dateTime}\n${coordinates}\n${group}\n${contractor}`;
+
+    document.getElementById('overlayText').innerText = updatedAddress; // Update overlay text
 }
 
-#takePhotoButton:hover {
-    background-color: #218838;
+function showPosition(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    const formattedCoordinates = formatCoordinates(latitude, longitude);
+    document.getElementById('coordinates').value = formattedCoordinates;
+    initialCoordinates = formattedCoordinates;
+
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener la dirección');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const formattedAddress = formatAddress(data);
+            const dateTime = document.getElementById('datetime').value;
+            const group = document.getElementById('group').value.trim();
+            const contractor = document.getElementById('contractor').value.trim();
+            const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}\n${group}\n${contractor}`;
+            document.getElementById('overlayText').innerText = completeAddress; // Update overlay text
+        })
+        .catch(error => {
+            document.getElementById('overlayText').innerText = 'No se pudo obtener la dirección'; // Update overlay text
+            console.error('Error:', error);
+        });
 }
 
-#takePhotoButton:active {
-    background-color: #1e7e34;
-}
-
-.container {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.card {
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    background-color: #fff;
-}
-
-.field-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.field {
-    flex: 1;
-    margin-right: 10px;
-}
-
-.field label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.field input,
-.field textarea {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.field textarea {
-    resize: none;
-    height: auto;
-}
-
-.buttons {
-    display: flex;
-    justify-content: space-between;
-}
-
-button {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    display: block;
-    width: 48%;
-    margin-bottom: 15px;
-    transition: background-color 0.3s, transform 0.1s;
-}
-
-button:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-button:hover {
-    transform: scale(0.98);
-}
-
-button:active {
-    transform: scale(0.96);
-}
-
-.btn-blue {
-    background-color: #007BFF;
-    color: white;
-}
-
-.btn-blue:hover {
-    background-color: #0056b3;
-}
-
-.btn-blue:active {
-    background-color: #004080;
-}
-
-.btn-red {
-    background-color: #FF0000;
-    color: white;
-}
-
-.btn-red:hover {
-    background-color: #cc0000;
-}
-
-.btn-red:active {
-    background-color: #990000;
-}
-
-.btn-green {
-    background-color: #28a745;
-    color: white;
-    margin-top: 10px;
-}
-
-.btn-green:hover {
-    background-color: #218838;
-}
-
-.btn-green:active {
-    background-color: #1e7e34;
-}
-
-.btn-camera {
-    background-color: transparent;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.5em;
-    margin: 5px;
-}
-
-.btn-camera:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-}
-
-.btn-camera:active {
-    background-color: rgba(255, 255, 255, 0.5);
-}
-
-.overlay-text {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.8em;
-    text-align: right;
-}
-
-.photo-gallery {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.photo-gallery img {
-    width: 100%;
-    height: 200px;
-    object-fit: contain;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-@media (min-width: 768px) {
-    .container {
-        max-width: 600px;
-        margin: 40px auto;
+function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            alert("Permiso denegado para obtener la ubicación.");
+            break;
+        case error.POSITION_UNAVAILABLE:
+            alert("La información de ubicación no está disponible.");
+            break;
+        case error.TIMEOUT:
+            alert("La solicitud para obtener la ubicación ha caducado.");
+            break;
+        case error.UNKNOWN_ERROR:
+            alert("Se ha producido un error desconocido.");
+            break;
     }
 }
+
+function updateDateTime() {
+    const inputDateTime = document.getElementById('edit-datetime').value;
+    if (inputDateTime) {
+        const date = new Date(inputDateTime);
+        const formattedDateTime = getCurrentDateTime(date);
+        document.getElementById('datetime').value = formattedDateTime;
+        return true;
+    }
+    return false;
+}
+
+function updateCoordinates() {
+    const coordinatesInput = document.getElementById('edit-coordinates').value;
+    if (coordinatesInput) {
+        const [latitude, longitude] = coordinatesInput.split(',').map(coord => parseFloat(coord.trim()));
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+            const formattedCoordinates = formatCoordinates(latitude, longitude);
+            document.getElementById('coordinates').value = formattedCoordinates;
+            return true;
+        } else {
+            alert('Por favor, ingrese coordenadas válidas.');
+            return false;
+        }
+    }
+    return false;
+}
+
+function updateGroupAndContractor() {
+    const group = document.getElementById('group').value.trim();
+    const contractor = document.getElementById('contractor').value.trim();
+    return { group, contractor };
+}
+
+function getCurrentData() {
+    const currentDateTime = getCurrentDateTime();
+    document.getElementById('datetime').value = currentDateTime;
+    initialDateTime = currentDateTime;
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError, {
+            maximumAge: 60000,
+            timeout: 5000,
+            enableHighAccuracy: true
+        });
+    } else {
+        alert("La geolocalización no es compatible con este navegador.");
+    }
+
+    document.getElementById('edit-datetime').value = '';
+    document.getElementById('edit-coordinates').value = '';
+}
+
+function applyUpdates() {
+    let updated = false;
+
+    const currentDateTime = document.getElementById('datetime').value;
+    const currentCoordinates = document.getElementById('coordinates').value;
+
+    const isDateTimeUpdated = updateDateTime();
+    if (isDateTimeUpdated || currentDateTime !== initialDateTime) updated = true;
+
+    const isCoordinatesUpdated = updateCoordinates();
+    if (isCoordinatesUpdated || currentCoordinates !== initialCoordinates) updated = true;
+
+    const { group, contractor } = updateGroupAndContractor();
+    if (group !== "PRO-01" || contractor !== "PROCISA") updated = true;
+
+    if (updated) {
+        updateCompleteAddress();
+    }
+}
+
+function startCamera() {
+    const video = document.getElementById('camera');
+
+    navigator.mediaDevices.getUserMedia({
+        video: {
+            facingMode: { exact: "environment" },
+            width: { ideal: window.innerWidth }, // Ideal resolution width based on screen width
+            height: { ideal: window.innerHeight } // Ideal resolution height based on screen height
+        }
+    })
+    .then(stream => {
+        videoStream = stream;
+        video.srcObject = stream;
+    })
+    .catch(error => {
+        console.error('Error accessing the camera:', error);
+    });
+}
+
+function toggleFlash() {
+    const track = videoStream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities();
+    if (capabilities.torch) {
+        track.applyConstraints({
+            advanced: [{ torch: !track.getSettings().torch }]
+        });
+    } else {
+        alert("El flash no es compatible con esta cámara.");
+    }
+}
+
+function focusCamera() {
+    const track = videoStream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities();
+    if (capabilities.focusMode) {
+        track.applyConstraints({
+            advanced: [{ focusMode: "continuous" }]
+        });
+    } else {
+        alert("El enfoque no es compatible con esta cámara.");
+    }
+}
+
+function applyZoom() {
+    const track = videoStream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities();
+    const zoomSlider = document.getElementById('zoomSlider');
+    if (capabilities.zoom) {
+        const zoomLevel = zoomSlider.value;
+        track.applyConstraints({
+            advanced: [{ zoom: zoomLevel }]
+        });
+    } else {
+        alert("El zoom no es compatible con esta cámara.");
+    }
+}
+
+function takePhoto() {
+    const video = document.getElementById('camera');
+    const canvas = document.getElementById('photoCanvas');
+    const overlayText = document.getElementById('overlayText').innerText;
+
+    const track = videoStream.getVideoTracks()[0];
+
+    // Activate flash if available
+    const capabilities = track.getCapabilities();
+    if (capabilities.torch) {
+        track.applyConstraints({
+            advanced: [{ torch: true }]
+        }).then(() => {
+            setTimeout(() => {
+                captureImage(video, canvas, overlayText);
+                track.applyConstraints({
+                    advanced: [{ torch: false }]
+                });
+            }, 200); // Delay to allow the flash effect
+        });
+    } else {
+        captureImage(video, canvas, overlayText);
+    }
+}
+
+function captureImage(video, canvas, overlayText) {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    context.font = '16px Arial';
+    context.fillStyle = 'white';
+    context.textAlign = 'right';
+    const lines = overlayText.split('\n');
+    let y = canvas.height - 20;
+    lines.reverse().forEach(line => {
+        context.fillText(line, canvas.width - 10, y);
+        y -= 20;
+    });
+
+    const dataUrl = canvas.toDataURL('image/png');
+    savePhotoToDB(dataUrl);
+    displayPhoto(dataUrl);
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    getCurrentData();
+    startCamera();
+});
 
