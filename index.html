@@ -13,10 +13,10 @@
         <div class="camera-container">
             <video id="camera" autoplay></video>
             <div class="overlay" id="overlay"></div>
-            <div class="camera-controls">
+            <div class="camera-buttons">
+                <button class="btn-camera" id="flashButton" onclick="toggleFlash()">Flash</button>
+                <button class="btn-camera" id="focusButton" onclick="focusCamera()">Enfocar</button>
                 <button class="btn-green" onclick="takePhoto()">TOMAR FOTO</button>
-                <button class="btn-yellow" id="toggleFlash" onclick="toggleFlash()">FLASH</button>
-                <button class="btn-orange" id="focusCamera" onclick="focusCamera()">ENFOCAR</button>
             </div>
         </div>
         <div class="field-group">
