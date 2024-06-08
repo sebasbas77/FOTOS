@@ -149,7 +149,7 @@ button:active {
     width: 100%;
     max-width: 600px;
     margin: 20px auto;
-    height: 500px; /* Increased height to accommodate the photo button */
+    height: 450px;
 }
 
 video {
@@ -163,12 +163,11 @@ video {
 .overlay {
     position: absolute;
     bottom: 10px;
-    left: 10px; /* Align to the left */
+    left: 10px;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 0.8em;
-    background: rgba(0, 0, 0, 0.5); /* Optional: Add a semi-transparent background for better visibility */
 }
 
 .camera-controls {
@@ -177,26 +176,26 @@ video {
     left: 10px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
 }
 
 #zoomSlider {
-    margin-top: 5px;
-    width: 100px;
-    writing-mode: bt-lr; /* Ensure vertical orientation */
-    -webkit-appearance: slider-vertical; /* Webkit browsers */
-    transform: rotate(270deg); /* Rotate to vertical position */
+    margin-top: 10px;
+    writing-mode: bt-lr; /* This makes the slider vertical */
+    -webkit-appearance: slider-vertical; /* For Safari */
+    width: 8px;
+    height: 100px;
 }
 
 .overlay-text {
     position: absolute;
     bottom: 10px;
-    left: 10px; /* Align to the left */
+    left: 10px;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 0.8em;
-    background: rgba(0, 0, 0, 0.5); /* Optional: Add a semi-transparent background for better visibility */
+    text-align: left; /* Align the text to the left */
 }
 
 .photo-gallery {
@@ -221,3 +220,4 @@ video {
         margin: 40px auto;
     }
 }
+
