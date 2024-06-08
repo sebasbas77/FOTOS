@@ -68,7 +68,7 @@ body {
 
 .field-icon button:active {
     transform: scale(0.9);
-    color: #0056b3; /* Keep the same color on active */
+    color: #007BFF; /* Keep the same color on active */
 }
 
 .field-icon button:focus {
