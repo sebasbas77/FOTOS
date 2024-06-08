@@ -43,10 +43,11 @@
             <textarea id="address" rows="6" readonly></textarea>
         </div>
         <div class="camera-container">
-            <video id="video" autoplay></video>
-            <canvas id="canvas" style="display:none;"></canvas>
-            <button class="btn-blue" onclick="takePhoto()">Tomar Fotografía</button>
+            <video id="camera" autoplay></video>
+            <div class="overlay" id="overlay"></div>
+            <button class="btn-green" onclick="takePhoto()">TOMAR FOTO</button>
         </div>
+        <canvas id="photoCanvas" style="display: none;"></canvas>
     </div>
     <script src="scripts.js"></script>
 </body>
