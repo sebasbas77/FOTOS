@@ -324,6 +324,27 @@ function takePhoto() {
     const canvas = document.getElementById('photoCanvas');
     const overlayText = document.getElementById('overlayText').innerText;
 
+    const track = videoStream.getVideoTracks()[0];
+
+    // Activate flash if available
+    const capabilities = track.getCapabilities();
+    if (capabilities.torch) {
+        track.applyConstraints({
+            advanced: [{ torch: true }]
+        }).then(() => {
+            setTimeout(() => {
+                captureImage(video, canvas, overlayText);
+                track.applyConstraints({
+                    advanced: [{ torch: false }]
+                });
+            }, 200); // Delay to allow the flash effect
+        });
+    } else {
+        captureImage(video, canvas, overlayText);
+    }
+}
+
+function captureImage(video, canvas, overlayText) {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const context = canvas.getContext('2d');
