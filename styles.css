@@ -119,22 +119,22 @@ button:active {
 }
 
 .btn-camera {
-    background-color: #007BFF;
+    background-color: transparent;
     color: white;
     padding: 10px;
     border: none;
-    border-radius: 5px;
+    border-radius: 50%;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 1.5em;
     margin: 5px;
 }
 
 .btn-camera:hover {
-    background-color: #0056b3;
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 .btn-camera:active {
-    background-color: #004080;
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
 .camera-container {
@@ -142,12 +142,15 @@ button:active {
     width: 100%;
     max-width: 600px;
     margin: 20px auto;
+    height: 400px;
 }
 
 video {
     width: 100%;
+    height: 100%;
     border: 1px solid #ccc;
     border-radius: 10px;
+    object-fit: cover;
 }
 
 .overlay {
@@ -161,17 +164,17 @@ video {
     font-size: 0.8em;
 }
 
-.camera-buttons {
+.camera-controls {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
-    margin-top: 10px;
 }
 
 #zoomSlider {
     margin: 5px;
-    width: 100%;
+    width: 100px;
 }
 
 .photo-gallery {
