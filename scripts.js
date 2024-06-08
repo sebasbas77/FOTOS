@@ -210,6 +210,20 @@ function focusCamera() {
     }
 }
 
+function applyZoom() {
+    const track = videoStream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities();
+    const zoomSlider = document.getElementById('zoomSlider');
+    if (capabilities.zoom) {
+        const zoomLevel = zoomSlider.value;
+        track.applyConstraints({
+            advanced: [{ zoom: zoomLevel }]
+        });
+    } else {
+        alert("El zoom no es compatible con esta cámara.");
+    }
+}
+
 function takePhoto() {
     const video = document.getElementById('camera');
     const canvas = document.getElementById('photoCanvas');
@@ -231,12 +245,13 @@ function takePhoto() {
         y -= 20;
     });
 
-    // Convert canvas to image and download
-    const dataURL = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = 'photo.png';
-    link.click();
+    // Convert canvas to image
+    canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const img = document.createElement('img');
+        img.src = url;
+        document.body.appendChild(img);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
