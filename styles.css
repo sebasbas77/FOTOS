@@ -164,7 +164,14 @@ video {
 .camera-buttons {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
     margin-top: 10px;
+}
+
+#zoomSlider {
+    margin: 5px;
+    width: 100%;
 }
 
 @media (min-width: 768px) {
