@@ -44,7 +44,7 @@ function loadPhotosFromDB() {
     request.onsuccess = function(event) {
         const cursor = event.target.result;
         if (cursor) {
-            displayPhoto(cursor.value.base64);
+            displayPhoto(cursor.value.base64, cursor.value.id);
             cursor.continue();
         }
     };
@@ -54,25 +54,53 @@ function loadPhotosFromDB() {
     };
 }
 
-function deletePhotoFromDB(id) {
+function clearPhotos() {
     const transaction = db.transaction(['photos'], 'readwrite');
     const objectStore = transaction.objectStore('photos');
-    const request = objectStore.delete(id);
+    const request = objectStore.clear();
 
     request.onsuccess = function() {
-        console.log('Photo deleted from DB');
+        console.log('All photos cleared from DB');
+        document.getElementById('photoGallery').innerHTML = '';
+        photos.length = 0; // Clear the photos array
     };
 
     request.onerror = function(event) {
-        console.error('Error deleting photo from DB:', event.target.error);
+        console.error('Error clearing photos from DB:', event.target.error);
     };
 }
 
-function displayPhoto(photo) {
+function sharePhotos() {
+    if (!navigator.share) {
+        alert('Web Share API no soportada en este navegador.');
+        return;
+    }
+
+    const files = photos.map((base64, index) => {
+        const byteString = atob(base64.split(',')[1]);
+        const mimeString = base64.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mimeString });
+        return new File([blob], `photo_${index + 1}.png`, { type: mimeString });
+    });
+
+    navigator.share({
+        files: files,
+        title: 'Fotos de la galería',
+        text: 'Compartir fotos desde la aplicación web.'
+    }).catch((error) => console.error('Error sharing:', error));
+}
+
+function displayPhoto(photo, id) {
     const img = document.createElement('img');
     img.src = photo;
     img.className = 'thumbnail';
     img.style.objectFit = 'contain';
+    img.dataset.id = id; // Store the ID for potential use
     document.getElementById('photoGallery').appendChild(img);
     photos.push(photo);
 }
