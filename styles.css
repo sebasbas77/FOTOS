@@ -113,8 +113,6 @@ button:active {
 .btn-green {
     background-color: #28a745;
     color: white;
-    width: 100%;
-    margin-top: 10px;
 }
 
 .btn-green:hover {
@@ -147,9 +145,9 @@ button:active {
 .camera-container {
     position: relative;
     width: 100%;
-    max-width: 800px; /* Increased size for better visibility */
+    max-width: 800px; /* Increase the width for better visibility */
     margin: 20px auto;
-    height: 600px; /* Increased size for better visibility */
+    height: 600px; /* Increase the height for better visibility */
 }
 
 video {
@@ -168,6 +166,7 @@ video {
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 0.8em;
+    text-align: right; /* Align the text to the right */
 }
 
 .camera-controls {
@@ -216,7 +215,8 @@ video {
 
 @media (min-width: 768px) {
     .container {
-        max-width: 800px; /* Increased size for better visibility */
+        max-width: 600px;
         margin: 40px auto;
     }
 }
+
