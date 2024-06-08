@@ -139,15 +139,11 @@ function formatAddress(data) {
 function updateCompleteAddress() {
     const dateTime = document.getElementById('datetime').value;
     const coordinates = document.getElementById('coordinates').value;
-    const address = document.getElementById('address').value;
     const group = document.getElementById('group').value.trim();
     const contractor = document.getElementById('contractor').value.trim();
 
-    const lines = address.split('\n').filter(line => !line.startsWith('PRO-') && !line.startsWith('PROCISA'));
-    const addressLines = lines.slice(2).filter(line => line.trim() !== '');
-    const updatedAddress = `${dateTime}\n${coordinates}\n${addressLines.join('\n')}\n${group}\n${contractor}`;
+    const updatedAddress = `${dateTime}\n${coordinates}\n${group}\n${contractor}`;
 
-    document.getElementById('address').value = updatedAddress;
     document.getElementById('overlayText').innerText = updatedAddress; // Update overlay text
 }
 
@@ -171,11 +167,9 @@ function showPosition(position) {
             const group = document.getElementById('group').value.trim();
             const contractor = document.getElementById('contractor').value.trim();
             const completeAddress = `${dateTime}\n${formattedCoordinates}\n${formattedAddress}\n${group}\n${contractor}`;
-            document.getElementById('address').value = completeAddress;
             document.getElementById('overlayText').innerText = completeAddress; // Update overlay text
         })
         .catch(error => {
-            document.getElementById('address').value = 'No se pudo obtener la dirección';
             document.getElementById('overlayText').innerText = 'No se pudo obtener la dirección'; // Update overlay text
             console.error('Error:', error);
         });
@@ -328,7 +322,7 @@ function applyZoom() {
 function takePhoto() {
     const video = document.getElementById('camera');
     const canvas = document.getElementById('photoCanvas');
-    const overlayText = document.getElementById('address').value;
+    const overlayText = document.getElementById('overlayText').innerText;
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
