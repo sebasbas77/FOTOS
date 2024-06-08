@@ -118,6 +118,36 @@ button:active {
     background-color: #1e7e34;
 }
 
+.btn-yellow {
+    background-color: #ffc107;
+    color: white;
+    width: 48%;
+    margin-top: 10px;
+}
+
+.btn-yellow:hover {
+    background-color: #e0a800;
+}
+
+.btn-yellow:active {
+    background-color: #c69500;
+}
+
+.btn-orange {
+    background-color: #fd7e14;
+    color: white;
+    width: 48%;
+    margin-top: 10px;
+}
+
+.btn-orange:hover {
+    background-color: #e85d04;
+}
+
+.btn-orange:active {
+    background-color: #dc2f02;
+}
+
 .camera-container {
     position: relative;
     width: 100%;
@@ -140,6 +170,12 @@ video {
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 0.8em;
+}
+
+.camera-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
 }
 
 @media (min-width: 768px) {
