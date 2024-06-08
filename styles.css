@@ -26,6 +26,10 @@ body {
     margin-right: 10px;
 }
 
+.field:last-child {
+    margin-right: 0;
+}
+
 .field label {
     display: block;
     font-weight: bold;
@@ -49,38 +53,6 @@ body {
     height: 100%;
 }
 
-.field-icon a {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 2em;
-    color: #007BFF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    text-decoration: none;
-    transition: color 0.3s, transform 0.1s;
-}
-
-.field-icon a:hover {
-    color: #0056b3;
-}
-
-.field-icon a:active {
-    transform: scale(0.9);
-    color: #007BFF; /* Keep the same color on active */
-}
-
-.field-icon a:focus {
-    outline: none;
-}
-
-.field textarea {
-    resize: none;
-    height: auto; /* Ensure the textarea grows to fit its content */
-}
-
 button {
     padding: 10px;
     background-color: #007BFF;
@@ -90,7 +62,7 @@ button {
     cursor: pointer;
     font-size: 1em;
     display: block;
-    width: 100%;
+    width: 48%; /* Adjusted to fit two buttons side by side */
     margin-bottom: 15px;
     transition: background-color 0.3s, transform 0.1s;
 }
@@ -100,13 +72,23 @@ button:hover {
 }
 
 button:active {
-    background-color: #0056b3; /* Keep the same background color on active */
+    background-color: #004080;
     transform: scale(0.98);
 }
 
 button:focus {
     outline: none;
     box-shadow: none;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.field textarea {
+    resize: none;
+    height: auto; /* Ensure the textarea grows to fit its content */
 }
 
 @media (min-width: 768px) {
