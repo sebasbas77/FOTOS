@@ -10,6 +10,15 @@
 </head>
 <body>
     <div class="container">
+        <div class="camera-container">
+            <video id="camera" autoplay></video>
+            <div class="overlay" id="overlay"></div>
+            <div class="camera-controls">
+                <button class="btn-green" onclick="takePhoto()">TOMAR FOTO</button>
+                <button class="btn-yellow" id="toggleFlash" onclick="toggleFlash()">FLASH</button>
+                <button class="btn-orange" id="focusCamera" onclick="focusCamera()">ENFOCAR</button>
+            </div>
+        </div>
         <div class="field-group">
             <div class="field">
                 <label for="datetime">Fecha/Hora:</label>
@@ -41,11 +50,6 @@
         <div class="field">
             <label for="address">Datos Completos:</label>
             <textarea id="address" rows="6" readonly></textarea>
-        </div>
-        <div class="camera-container">
-            <video id="camera" autoplay></video>
-            <div class="overlay" id="overlay"></div>
-            <button class="btn-green" onclick="takePhoto()">TOMAR FOTO</button>
         </div>
         <canvas id="photoCanvas" style="display: none;"></canvas>
     </div>
