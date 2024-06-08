@@ -252,6 +252,7 @@ function takePhoto() {
         const img = document.createElement('img');
         img.src = url;
         img.className = 'thumbnail'; // Optional: Add a class for styling
+        img.style.objectFit = 'contain'; // Ensure the image fits within the bounds without cropping
         document.getElementById('photoGallery').appendChild(img);
         photos.push(blob);
     });
