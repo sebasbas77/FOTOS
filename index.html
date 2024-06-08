@@ -16,11 +16,6 @@
                 <input type="text" id="datetime" readonly>
                 <input type="datetime-local" id="edit-datetime">
             </div>
-            <div class="field-icon">
-                <a href="#" onclick="updateDateTime()">
-                    <i class="fas fa-redo"></i>
-                </a>
-            </div>
         </div>
         <div class="field-group">
             <div class="field">
@@ -28,14 +23,6 @@
                 <input type="text" id="coordinates" readonly>
                 <input type="text" id="edit-coordinates" placeholder="Lat, Long">
             </div>
-            <div class="field-icon">
-                <a href="#" onclick="updateCoordinates()">
-                    <i class="fas fa-redo"></i>
-                </a>
-            </div>
-        </div>
-        <div class="field">
-            <button onclick="getCurrentData()">Obtener Datos</button>
         </div>
         <div class="field-group">
             <div class="field">
@@ -46,11 +33,10 @@
                 <label for="contractor">Contratista:</label>
                 <input type="text" id="contractor" value="PROCISA">
             </div>
-            <div class="field-icon">
-                <a href="#" onclick="updateGroupAndContractor()">
-                    <i class="fas fa-redo"></i>
-                </a>
-            </div>
+        </div>
+        <div class="button-group">
+            <button onclick="getCurrentData()">ACTUALIZAR</button>
+            <button onclick="applyUpdates()">APLICAR</button>
         </div>
         <div class="field">
             <label for="address">Datos Completos:</label>
