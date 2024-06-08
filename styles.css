@@ -26,10 +26,6 @@ body {
     margin-right: 10px;
 }
 
-.field:last-child {
-    margin-right: 0;
-}
-
 .field label {
     display: block;
     font-weight: bold;
@@ -46,11 +42,14 @@ body {
     border-radius: 5px;
 }
 
-.field-icon {
+.field textarea {
+    resize: none;
+    height: auto; /* Ensure the textarea grows to fit its content */
+}
+
+.buttons {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
+    justify-content: space-between;
 }
 
 button {
@@ -62,7 +61,7 @@ button {
     cursor: pointer;
     font-size: 1em;
     display: block;
-    width: 48%; /* Adjusted to fit two buttons side by side */
+    width: 48%; /* Ensure both buttons have the same size */
     margin-bottom: 15px;
     transition: background-color 0.3s, transform 0.1s;
 }
@@ -72,23 +71,13 @@ button:hover {
 }
 
 button:active {
-    background-color: #004080;
+    background-color: #004080; /* Keep the same background color on active */
     transform: scale(0.98);
 }
 
 button:focus {
     outline: none;
     box-shadow: none;
-}
-
-.button-group {
-    display: flex;
-    justify-content: space-between;
-}
-
-.field textarea {
-    resize: none;
-    height: auto; /* Ensure the textarea grows to fit its content */
 }
 
 @media (min-width: 768px) {
